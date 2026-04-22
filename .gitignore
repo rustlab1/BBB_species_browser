@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Local archive of the previous site (kept out of the published repo)
+_archive/
+
+# Empty placeholder from previous layout
+BBB_species_browser/

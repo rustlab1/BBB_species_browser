@@ -1,0 +1,254 @@
+{
+  "n_cells": 144064,
+  "n_genes": 7685,
+  "species": [
+    "human",
+    "macaque",
+    "marmoset",
+    "mouse",
+    "rat",
+    "pig"
+  ],
+  "cell_types": [
+    "Art_EC",
+    "Cap_EC",
+    "EC",
+    "Fibroblast",
+    "Pericyte",
+    "SMC",
+    "Ven_EC"
+  ],
+  "cell_types_per_species": {
+    "human": [
+      "Art_EC",
+      "Cap_EC",
+      "EC",
+      "Pericyte",
+      "SMC",
+      "Ven_EC"
+    ],
+    "macaque": [
+      "Art_EC",
+      "Fibroblast",
+      "Pericyte",
+      "SMC",
+      "Ven_EC"
+    ],
+    "marmoset": [
+      "Art_EC",
+      "Cap_EC",
+      "Fibroblast",
+      "Pericyte",
+      "SMC",
+      "Ven_EC"
+    ],
+    "mouse": [
+      "Art_EC",
+      "Cap_EC",
+      "Pericyte",
+      "SMC",
+      "Ven_EC"
+    ],
+    "rat": [
+      "Cap_EC",
+      "Pericyte"
+    ],
+    "pig": [
+      "Cap_EC",
+      "Fibroblast",
+      "Pericyte"
+    ]
+  },
+  "n_cells_per_species": {
+    "human": 31808,
+    "macaque": 44243,
+    "marmoset": 48320,
+    "mouse": 17023,
+    "rat": 1601,
+    "pig": 1069
+  },
+  "n_cells_per_celltype": {
+    "Art_EC": 12114,
+    "Cap_EC": 43134,
+    "EC": 15788,
+    "Fibroblast": 18255,
+    "Pericyte": 23794,
+    "SMC": 8470,
+    "Ven_EC": 22509
+  },
+  "species_colors": {
+    "human": "#0279EE",
+    "macaque": "#FF9400",
+    "marmoset": "#75A025",
+    "mouse": "#444444",
+    "rat": "#E91E8C",
+    "pig": "#9B59B6"
+  },
+  "celltype_colors": {
+    "Cap_EC": "#0279EE",
+    "Art_EC": "#FF9400",
+    "Ven_EC": "#75A025",
+    "Pericyte": "#E9ED4C",
+    "SMC": "#FD9BED",
+    "Fibroblast": "#9B59B6",
+    "EC": "#95A5A6"
+  },
+  "conservation_note": "Expressolog Pearson r computed across shared cell types. Rat/pig unreliable (n=2 shared CTs). Macaque missing Cap_EC.",
+  "reliable_species_for_conservation": [
+    "macaque",
+    "marmoset",
+    "mouse"
+  ],
+  "version": "1.0",
+  "atlas_name": "BBB Cross-Species Atlas (6 species)",
+  "rmt_genes": [
+    "TFRC",
+    "ATP1A2",
+    "LRP1",
+    "SLC2A1",
+    "AGER",
+    "INSR",
+    "TMEM30A",
+    "ITGAV",
+    "LDLR",
+    "SLC3A2"
+  ],
+  "rmt_genes_in_browser": [
+    "TFRC",
+    "ATP1A2",
+    "LRP1",
+    "INSR",
+    "TMEM30A",
+    "ITGAV",
+    "LDLR",
+    "SLC3A2"
+  ],
+  "rmt_panel": [
+    {
+      "gene": "TFRC",
+      "primary_cell_type": "Capillary EC",
+      "category": "Pattern-conserved",
+      "composite_score": 0.397,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": 0.571
+    },
+    {
+      "gene": "ATP1A2",
+      "primary_cell_type": "Pericyte",
+      "category": "High confidence",
+      "composite_score": 0.299,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": 0.789
+    },
+    {
+      "gene": "LRP1",
+      "primary_cell_type": "Fibroblast",
+      "category": "Poorly conserved",
+      "composite_score": 0.256,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": 0.143
+    },
+    {
+      "gene": "SLC2A1",
+      "primary_cell_type": "Capillary EC",
+      "category": "Poorly conserved",
+      "composite_score": 0.143,
+      "in_browser": false,
+      "note": "Absent from 6-way ortholog intersection",
+      "mean_reliable": null
+    },
+    {
+      "gene": "AGER",
+      "primary_cell_type": "SMC",
+      "category": "Poorly conserved",
+      "composite_score": 0.082,
+      "in_browser": false,
+      "note": "Absent from 6-way ortholog intersection",
+      "mean_reliable": null
+    },
+    {
+      "gene": "INSR",
+      "primary_cell_type": "Venous EC",
+      "category": "Pattern-conserved",
+      "composite_score": 0.061,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": 0.651
+    },
+    {
+      "gene": "TMEM30A",
+      "primary_cell_type": "Venous EC",
+      "category": "Poorly conserved",
+      "composite_score": 0.004,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": 0.143
+    },
+    {
+      "gene": "ITGAV",
+      "primary_cell_type": "Astrocyte",
+      "category": "Poorly conserved",
+      "composite_score": 0.0,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": -0.622
+    },
+    {
+      "gene": "LDLR",
+      "primary_cell_type": "Astrocyte",
+      "category": "Poorly conserved",
+      "composite_score": 0.0,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": 0.313
+    },
+    {
+      "gene": "SLC3A2",
+      "primary_cell_type": "Capillary EC",
+      "category": "Poorly conserved",
+      "composite_score": 0.0,
+      "in_browser": true,
+      "note": null,
+      "mean_reliable": 0.224
+    }
+  ],
+  "translatability_categories": {
+    "High confidence": {
+      "color": "#2ecc71",
+      "description": "Conserved expression pattern across macaque and mouse (r > 0.8 in both)"
+    },
+    "Pattern-conserved": {
+      "color": "#f39c12",
+      "description": "Broadly conserved but with species-specific variation"
+    },
+    "Poorly conserved": {
+      "color": "#e74c3c",
+      "description": "Expression pattern diverges substantially across species"
+    }
+  },
+  "cell_type_display_names": {
+    "Cap_EC": "Capillary EC",
+    "Art_EC": "Arterial EC",
+    "Ven_EC": "Venous EC",
+    "Pericyte": "Pericyte",
+    "SMC": "Smooth Muscle Cell",
+    "Fibroblast": "Fibroblast",
+    "EC": "EC (unclassified)"
+  },
+  "species_display_names": {
+    "human": "Human",
+    "macaque": "Macaque",
+    "marmoset": "Marmoset",
+    "mouse": "Mouse",
+    "rat": "Rat",
+    "pig": "Pig"
+  },
+  "category_note": "Translatability categories recomputed from 6-species data (macaque + marmoset + mouse). Thresholds: High confidence = mean r \u2265 0.70; Pattern-conserved = 0.40\u20130.69; Poorly conserved = < 0.40. Pig and rat excluded from mean (only 2 shared cell types \u2192 r always \u00b11). SLC2A1 and AGER are absent from the 6-way ortholog intersection and cannot be assessed.",
+  "missing_rmt_genes": {
+    "AGER": "Receptor for advanced glycation end-products \u2014 absent from 6-way ortholog intersection",
+    "SLC2A1": "GLUT1 glucose transporter \u2014 absent from 6-way ortholog intersection"
+  }
+}

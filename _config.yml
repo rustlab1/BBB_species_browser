@@ -1,0 +1,5 @@
+# GitHub Pages configuration
+# No Jekyll processing needed for pure HTML/JS site
+exclude:
+  - "*.py"
+  - "*.R"

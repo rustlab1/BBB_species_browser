@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBB Cross-Species Atlas — Gene Expression Browser</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f8f9fc;
+      --surface: #ffffff;
+      --surface2: #f1f3f8;
+      --border: #dde1ea;
+      --text: #1a1d2e;
+      --text2: #5a6070;
+      --accent: #0279EE;
+      --accent2: #0056b3;
+      --success: #27ae60;
+      --warn: #f39c12;
+      --danger: #e74c3c;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    html { font-size: 15px; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ===== HEADER ===== */
+    .app-header {
+      background: linear-gradient(135deg, #0a1628 0%, #0d2044 50%, #0a1628 100%);
+      color: white;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-logo {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #0279EE, #00c6ff);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900; color: white;
+      box-shadow: 0 2px 8px rgba(2,121,238,0.4);
+    }
+    .header-title h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.3px; }
+    .header-title p { font-size: 0.78rem; color: rgba(255,255,255,0.65); margin-top: 1px; }
+    .header-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .badge-blue { background: rgba(2,121,238,0.25); color: #7ec8ff; border: 1px solid rgba(2,121,238,0.3); }
+    .badge-green { background: rgba(39,174,96,0.2); color: #7ddc9e; border: 1px solid rgba(39,174,96,0.3); }
+    .badge-orange { background: rgba(243,156,18,0.2); color: #ffd080; border: 1px solid rgba(243,156,18,0.3); }
+
+    /* ===== LAYOUT ===== */
+    .app-body {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 0;
+      min-height: calc(100vh - 80px);
+    }
+    .sidebar {
+      grid-row: 1 / 3;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .main-content {
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface2);
+    }
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .card-body { padding: 16px; }
+
+    /* ===== SEARCH ===== */
+    .search-wrap { position: relative; }
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(2,121,238,0.12);
+    }
+    .search-icon {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      color: var(--text2); font-size: 16px; pointer-events: none;
+    }
+    .autocomplete-list {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    .autocomplete-list.open { display: block; }
+    .autocomplete-item {
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: background 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .autocomplete-item:hover, .autocomplete-item.active {
+      background: rgba(2,121,238,0.08);
+      color: var(--accent);
+    }
+    .autocomplete-item .gene-name { font-weight: 600; }
+    .autocomplete-item .gene-match { color: var(--accent); }
+
+    /* ===== GENE SET TEXTAREA ===== */
+    .gene-set-toggle {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; color: var(--text2); cursor: pointer;
+      margin-top: 8px;
+    }
+    .gene-set-toggle input { cursor: pointer; }
+    .gene-set-area {
+      display: none;
+      margin-top: 8px;
+    }
+    .gene-set-area.open { display: block; }
+    .gene-set-textarea {
+      width: 100%;
+      height: 90px;
+      padding: 8px 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-family: monospace;
+      resize: vertical;
+      outline: none;
+      color: var(--text);
+      background: var(--surface);
+    }
+    .gene-set-textarea:focus { border-color: var(--accent); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px;
+      border: none; border-radius: 7px;
+      font-size: 0.83rem; font-weight: 600; font-family: var(--font);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* ===== CURRENT GENE DISPLAY ===== */
+    .gene-display {
+      background: linear-gradient(135deg, rgba(2,121,238,0.06), rgba(2,121,238,0.02));
+      border: 1px solid rgba(2,121,238,0.2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: none;
+    }
+    .gene-display.visible { display: block; }
+    .gene-display-name {
+      font-size: 1.4rem; font-weight: 800; color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+    .gene-display-sub { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
+
+    /* ===== ATLAS OVERVIEW ===== */
+    .overview-section { }
+    .overview-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    .overview-toggle .chevron { transition: transform 0.2s; font-size: 12px; }
+    .overview-toggle.collapsed .chevron { transform: rotate(-90deg); }
+    .overview-body { margin-top: 12px; }
+    .overview-body.hidden { display: none; }
+    .species-bar-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    }
+    .species-bar-label { width: 72px; font-size: 0.78rem; font-weight: 600; text-align: right; }
+    .species-bar-track {
+      flex: 1; height: 14px; background: var(--surface2);
+      border-radius: 7px; overflow: hidden;
+    }
+    .species-bar-fill { height: 100%; border-radius: 7px; transition: width 0.5s ease; }
+    .species-bar-count { font-size: 0.72rem; color: var(--text2); min-width: 50px; }
+
+    /* ===== NOTES ===== */
+    .note {
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .note-info { background: rgba(2,121,238,0.07); border-left: 3px solid var(--accent); color: var(--text2); }
+    .note-warn { background: rgba(243,156,18,0.08); border-left: 3px solid var(--warn); color: #7a5a00; }
+    .note-absent { background: rgba(231,76,60,0.07); border-left: 3px solid var(--danger); color: #7a2020; }
+
+    /* ===== TABS ===== */
+    .tabs {
+      display: flex; gap: 2px;
+      background: var(--surface2);
+      border-radius: 9px;
+      padding: 3px;
+      border: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1; padding: 7px 10px;
+      border: none; border-radius: 7px;
+      font-size: 0.8rem; font-weight: 600; font-family: var(--font);
+      cursor: pointer; background: transparent; color: var(--text2);
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== CHART CONTAINERS ===== */
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .chart-wrap canvas { max-width: 100%; }
+
+    /* ===== DOT PLOT ===== */
+    .dot-plot-container {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    #dotPlotCanvas {
+      display: block;
+    }
+
+    /* ===== UMAP ===== */
+    .umap-controls {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .umap-toggle-group {
+      display: flex; gap: 2px;
+      background: var(--surface2);
+      border-radius: 7px;
+      padding: 2px;
+      border: 1px solid var(--border);
+    }
+    .umap-toggle-btn {
+      padding: 5px 12px;
+      border: none; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 600; font-family: var(--font);
+      cursor: pointer; background: transparent; color: var(--text2);
+      transition: all 0.15s;
+    }
+    .umap-toggle-btn.active {
+      background: var(--surface);
+      color: var(--accent);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    #umapCanvas {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: crosshair;
+      display: block;
+      max-width: 100%;
+    }
+    .umap-legend {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 10px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.75rem; color: var(--text2);
+    }
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .colorbar-wrap {
+      display: flex; align-items: center; gap: 8px; margin-top: 8px;
+    }
+    .colorbar {
+      height: 12px; width: 160px; border-radius: 6px;
+      background: linear-gradient(to right, #e8f4fd, #0279EE);
+      border: 1px solid var(--border);
+    }
+    .colorbar-label { font-size: 0.72rem; color: var(--text2); }
+
+    /* ===== CONSERVATION ===== */
+    .conservation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .conservation-card {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+    }
+    .conservation-species {
+      font-size: 0.82rem; font-weight: 700; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .conservation-bar-track {
+      height: 18px; background: #e8eaf0;
+      border-radius: 9px; overflow: hidden; position: relative;
+    }
+    .conservation-bar-fill {
+      height: 100%; border-radius: 9px;
+      transition: width 0.6s ease;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 6px;
+    }
+    .conservation-bar-fill span { font-size: 0.7rem; font-weight: 700; color: white; }
+    .conservation-r-val {
+      font-size: 0.78rem; color: var(--text2); margin-top: 4px;
+    }
+    .reliability-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 12px;
+      font-size: 0.7rem; font-weight: 700;
+    }
+    .badge-high { background: rgba(39,174,96,0.15); color: #1a7a40; border: 1px solid rgba(39,174,96,0.3); }
+    .badge-medium { background: rgba(243,156,18,0.15); color: #7a5a00; border: 1px solid rgba(243,156,18,0.3); }
+    .badge-low { background: rgba(231,76,60,0.12); color: #7a2020; border: 1px solid rgba(231,76,60,0.3); }
+
+    /* ===== MARKERS TABLE ===== */
+    .markers-controls {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .select-styled {
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.83rem;
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+    }
+    .select-styled:focus { border-color: var(--accent); }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    thead th {
+      padding: 8px 12px;
+      background: var(--surface2);
+      border-bottom: 2px solid var(--border);
+      text-align: left;
+      font-weight: 700;
+      color: var(--text2);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    thead th:hover { background: var(--border); }
+    thead th .sort-icon { margin-left: 4px; opacity: 0.5; }
+    thead th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    tbody tr:hover { background: rgba(2,121,238,0.04); }
+    tbody td { padding: 7px 12px; }
+    .gene-link {
+      color: var(--accent); font-weight: 600; cursor: pointer;
+      text-decoration: none;
+    }
+    .gene-link:hover { text-decoration: underline; }
+    .padj-val { font-family: monospace; font-size: 0.78rem; }
+
+    /* ===== GENE SET TABLE ===== */
+    .gene-set-summary {
+      display: none;
+    }
+    .gene-set-summary.visible { display: block; }
+
+    /* ===== LOADING / EMPTY STATES ===== */
+    .loading-spinner {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 40px;
+      color: var(--text2); font-size: 0.88rem;
+    }
+    .spinner {
+      width: 22px; height: 22px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state {
+      text-align: center; padding: 50px 20px;
+      color: var(--text2);
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 0.88rem; }
+    .not-found-msg {
+      background: rgba(231,76,60,0.07);
+      border: 1px solid rgba(231,76,60,0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: #7a2020;
+      display: none;
+    }
+    .not-found-msg.visible { display: block; }
+
+    /* ===== EXPORT BUTTON ===== */
+    .export-row {
+      display: flex; justify-content: flex-end; gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #b0b8c8; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .app-body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+      }
+      .sidebar {
+        grid-row: 1;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+    @media (max-width: 600px) {
+      .app-header { padding: 12px 16px; }
+      .main-content { padding: 12px; }
+      .sidebar { padding: 12px; }
+    }
+
+    /* ===== TOOLTIP ===== */
+    .tooltip-popup {
+      position: fixed;
+      background: rgba(20,24,40,0.92);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+      max-width: 200px;
+      line-height: 1.4;
+    }
+
+    /* ===== SPECIES COLOR DOTS ===== */
+    .sp-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+    /* ===== SECTION DIVIDER ===== */
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== TOOLTIP ===== -->
+<div class="tooltip-popup" id="tooltip"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="app-header">
+  <div class="header-left">
+    <div class="header-logo">B</div>
+    <div class="header-title">
+      <h1>BBB Cross-Species Atlas</h1>
+      <p>Blood-Brain Barrier Single-Cell Gene Expression Browser</p>
+    </div>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">6 Species</span>
+    <span class="badge badge-green">7,685 Genes</span>
+    <span class="badge badge-orange">144,064 Cells</span>
+  </div>
+</header>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="app-body">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+
+    <!-- Gene Search -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🔍 Gene Search</span>
+      </div>
+      <div class="card-body">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="geneSearchInput" class="search-input"
+            placeholder="Search gene (e.g. PECAM1)..." autocomplete="off" spellcheck="false">
+          <div class="autocomplete-list" id="autocompleteList"></div>
+        </div>
+        <div id="notFoundMsg" class="not-found-msg" style="margin-top:8px;">
+          ⚠️ Gene not found in atlas (7,685-gene ortholog set)
+        </div>
+
+        <!-- Gene Set Mode -->
+        <label class="gene-set-toggle">
+          <input type="checkbox" id="geneSetToggle"> Multi-gene / gene set mode
+        </label>
+        <div class="gene-set-area" id="geneSetArea">
+          <textarea class="gene-set-textarea" id="geneSetInput"
+            placeholder="Paste genes, one per line or comma-separated&#10;e.g. PECAM1, CDH5, VWF"></textarea>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button class="btn btn-primary btn-sm" onclick="searchGeneSet()">Search Set</button>
+            <button class="btn btn-secondary btn-sm" onclick="clearGeneSet()">Clear</button>
+          </div>
+        </div>
+
+        <!-- Current gene display -->
+        <div class="gene-display" id="geneDisplay">
+          <div class="gene-display-name" id="geneDisplayName"></div>
+          <div class="gene-display-sub" id="geneDisplaySub"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Atlas Overview -->
+    <div class="card">
+      <div class="card-header">
+        <div class="overview-toggle" id="overviewToggle" onclick="toggleOverview()">
+          <span class="card-title">📊 Atlas Overview</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="card-body overview-body" id="overviewBody">
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Cells per Species</div>
+        <div id="speciesBars"></div>
+        <div class="section-divider" style="margin:12px 0;"></div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Cell Type Composition</div>
+        <div id="celltypeBars"></div>
+        <div class="section-divider" style="margin:12px 0;"></div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">🎯 RMT Drug Targets</div>
+        <div id="rmtPanel"></div>
+      </div>
+    </div>
+
+    <!-- Scientific Notes -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📋 Atlas Notes</span>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+        <div class="note note-info">
+          <strong>Gene space:</strong> 7,685 genes in the 6-way ortholog intersection across all species.
+        </div>
+        <div class="note note-absent">
+          <strong>Known absent genes:</strong> ACTA2, CLDN5, SLC2A1 are <em>not</em> in the atlas (excluded from ortholog intersection).
+        </div>
+        <div class="note note-warn">
+          <strong>Conservation:</strong> Rat &amp; pig scores are unreliable (only 2 shared cell types with human). Macaque excludes Cap_EC.
+        </div>
+        <div class="note note-info">
+          <strong>Expression values:</strong> Normalized log1p mean expression. % = fraction of cells expressing gene.
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- Main Tabs -->
+    <div class="tabs" id="mainTabs">
+      <button class="tab-btn active" onclick="switchTab('expression')" id="tab-expression">Expression</button>
+      <button class="tab-btn" onclick="switchTab('umap')" id="tab-umap">UMAP</button>
+      <button class="tab-btn" onclick="switchTab('conservation')" id="tab-conservation">Conservation</button>
+      <button class="tab-btn" onclick="switchTab('markers')" id="tab-markers">Cell Type Markers</button>
+    </div>
+
+    <!-- ===== EXPRESSION TAB ===== -->
+    <div class="tab-panel active" id="panel-expression">
+      <div id="expressionEmpty" class="empty-state">
+        <div class="empty-icon">🧬</div>
+        <p>Search for a gene to view expression across species and cell types.</p>
+        <p style="margin-top:6px;font-size:0.78rem;">Try: <span class="gene-link" onclick="loadGene('PECAM1')">PECAM1</span>, <span class="gene-link" onclick="loadGene('VWF')">VWF</span>, <span class="gene-link" onclick="loadGene('PDGFRB')">PDGFRB</span></p>
+      </div>
+      <div id="expressionContent" style="display:none;">
+        <div class="export-row">
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+        </div>
+        <!-- Expression sub-tabs -->
+        <div class="tabs" id="exprSubTabs" style="margin-bottom:16px;">
+          <button class="tab-btn active" onclick="switchExprTab('dotplot')" id="subtab-dotplot">Dot Plot</button>
+          <button class="tab-btn" onclick="switchExprTab('barchart')" id="subtab-barchart">Bar Chart</button>
+          <button class="tab-btn" onclick="switchExprTab('crossspecies')" id="subtab-crossspecies">Cross-Species</button>
+        </div>
+
+        <!-- Dot Plot -->
+        <div class="tab-panel active" id="subpanel-dotplot">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">● Dot Plot — Expression by Species &amp; Cell Type</span>
+              <div style="display:flex;align-items:center;gap:8px;font-size:0.75rem;color:var(--text2);">
+                <span>Size = % expressing</span>
+                <span>Color = mean expr</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="dot-plot-container">
+                <canvas id="dotPlotCanvas"></canvas>
+              </div>
+              <div style="display:flex;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text2);">
+                  <span>Low expr</span>
+                  <div style="width:80px;height:10px;border-radius:5px;background:linear-gradient(to right,#2166ac,#f7f7f7,#d6604d);border:1px solid var(--border);"></div>
+                  <span>High expr</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text2);">
+                  <span>Size:</span>
+                  <svg width="60" height="16" viewBox="0 0 60 16">
+                    <circle cx="8" cy="8" r="3" fill="#888"/>
+                    <circle cx="24" cy="8" r="5" fill="#888"/>
+                    <circle cx="44" cy="8" r="7" fill="#888"/>
+                  </svg>
+                  <span>0% → 100%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="tab-panel" id="subpanel-barchart">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">▬ Mean Expression by Cell Type</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap" style="height:380px;">
+                <canvas id="barChartCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cross-Species -->
+        <div class="tab-panel" id="subpanel-crossspecies">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">⊞ Cross-Species Comparison by Cell Type</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap" style="height:400px;">
+                <canvas id="crossSpeciesCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gene Set Summary -->
+      <div class="gene-set-summary" id="geneSetSummary">
+        <div class="export-row">
+          <button class="btn btn-secondary btn-sm" onclick="exportGeneSetCSV()">⬇ Export Gene Set CSV</button>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 Gene Set Summary</span>
+            <span id="geneSetCount" style="font-size:0.78rem;color:var(--text2);"></span>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table id="geneSetTable">
+                <thead>
+                  <tr>
+                    <th>Gene</th>
+                    <th>In Atlas</th>
+                    <th>Max Mean Expr</th>
+                    <th>Top Cell Type</th>
+                    <th>Conservation (mean r)</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="geneSetTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== UMAP TAB ===== -->
+    <div class="tab-panel" id="panel-umap">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🗺 UMAP — 30,000 Cells</span>
+          <div class="umap-toggle-group">
+            <button class="umap-toggle-btn active" id="umapColorCelltype" onclick="setUmapColor('celltype')">Cell Type</button>
+            <button class="umap-toggle-btn" id="umapColorSpecies" onclick="setUmapColor('species')">Species</button>
+            <button class="umap-toggle-btn" id="umapColorGene" onclick="setUmapColor('gene')" id="umapColorGeneBtn">Gene Expr</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="umapLoadingMsg" class="loading-spinner">
+            <div class="spinner"></div> Loading UMAP coordinates...
+          </div>
+          <div id="umapContent" style="display:none;">
+            <canvas id="umapCanvas" width="700" height="500"></canvas>
+            <div id="umapLegend" class="umap-legend"></div>
+            <div id="umapColorbar" class="colorbar-wrap" style="display:none;">
+              <span class="colorbar-label">0</span>
+              <div class="colorbar"></div>
+              <span class="colorbar-label" id="umapColorbarMax">max</span>
+              <span style="font-size:0.72rem;color:var(--text2);margin-left:6px;">mean expression</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CONSERVATION TAB ===== -->
+    <div class="tab-panel" id="panel-conservation">
+      <div id="conservationEmpty" class="empty-state">
+        <div class="empty-icon">🧬</div>
+        <p>Search for a gene to view conservation scores.</p>
+      </div>
+      <div id="conservationContent" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🔗 Expressolog Conservation vs Human</span>
+            <div id="conservationReliabilityBadge"></div>
+          </div>
+          <div class="card-body">
+            <div class="conservation-grid" id="conservationGrid"></div>
+            <div class="chart-wrap" style="height:220px;">
+              <canvas id="conservationChart"></canvas>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+              <div class="note note-warn">
+                ⚠️ <strong>Rat &amp; pig:</strong> Conservation scores unreliable — only 2 shared cell types with human (Cap_EC, Pericyte).
+              </div>
+              <div class="note note-info">
+                ℹ️ <strong>Macaque:</strong> Conservation computed without Cap_EC (not present in macaque dataset).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MARKERS TAB ===== -->
+    <div class="tab-panel" id="panel-markers">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🏷 Cell Type Marker Genes</span>
+        </div>
+        <div class="card-body">
+          <div class="markers-controls">
+            <select class="select-styled" id="markersSpeciesSelect" onchange="loadMarkers()">
+              <option value="">Select species...</option>
+              <option value="human">Human</option>
+              <option value="macaque">Macaque</option>
+              <option value="marmoset">Marmoset</option>
+              <option value="mouse">Mouse</option>
+              <option value="rat">Rat</option>
+              <option value="pig">Pig</option>
+            </select>
+            <select class="select-styled" id="markersCelltypeSelect" onchange="loadMarkers()">
+              <option value="">Select cell type...</option>
+            </select>
+            <span id="markersCount" style="font-size:0.78rem;color:var(--text2);align-self:center;"></span>
+          </div>
+          <div id="markersEmpty" class="empty-state" style="padding:30px;">
+            <div class="empty-icon" style="font-size:2rem;">🏷</div>
+            <p>Select a species and cell type to view top marker genes.</p>
+          </div>
+          <div id="markersContent" style="display:none;">
+            <div class="table-wrap">
+              <table id="markersTable">
+                <thead>
+                  <tr>
+                    <th onclick="sortMarkers('rank')">#</th>
+                    <th onclick="sortMarkers('gene')">Gene <span class="sort-icon">↕</span></th>
+                    <th onclick="sortMarkers('score')" class="sorted">Score <span class="sort-icon">↓</span></th>
+                    <th onclick="sortMarkers('lfc')">log2FC <span class="sort-icon">↕</span></th>
+                    <th onclick="sortMarkers('padj')">padj <span class="sort-icon">↕</span></th>
+                    <th onclick="sortMarkers('pct_in')">% In <span class="sort-icon">↕</span></th>
+                    <th onclick="sortMarkers('pct_out')">% Out <span class="sort-icon">↕</span></th>
+                  </tr>
+                </thead>
+                <tbody id="markersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// BBB Cross-Species Atlas — Gene Expression Browser
+// Version 1.0 | Production-ready for GitHub Pages
+// ============================================================
+
+// ===== CONSTANTS =====
+const SPECIES_COLORS = {
+  human: '#0279EE', macaque: '#FF9400', marmoset: '#75A025',
+  mouse: '#444444', rat: '#E91E8C', pig: '#9B59B6'
+};
+const CELLTYPE_COLORS = {
+  Cap_EC: '#0279EE', Art_EC: '#FF9400', Ven_EC: '#75A025',
+  Pericyte: '#E9ED4C', SMC: '#FD9BED', Fibroblast: '#9B59B6', EC: '#95A5A6'
+};
+const SPECIES_ORDER = ['human', 'macaque', 'marmoset', 'mouse', 'rat', 'pig'];
+const CELLTYPE_ORDER = ['Art_EC', 'Cap_EC', 'EC', 'Fibroblast', 'Pericyte', 'SMC', 'Ven_EC'];
+const RELIABLE_CONSERVATION = ['macaque', 'marmoset', 'mouse'];
+const DATA_BASE = 'data/';  // relative path — works on GitHub Pages and file://
+
+// ===== STATE =====
+let geneIndex = [];          // array of human symbols
+let symbolToHuman = {};      // all-species symbol → human_symbol
+let geneIsRmt = {};          // human_symbol → bool
+let geneMaxMean = {};        // human_symbol → max_mean value
+let geneData = null;
+let umapData = null;
+let markersData = null;
+let metadata = null;
+let currentGene = null;
+let umapColorMode = 'celltype';
+let umapLoaded = false;
+let barChart = null;
+let crossSpeciesChart = null;
+let conservationChart = null;
+let markersSortCol = 'score';
+let markersSortDir = -1;
+let currentMarkersData = [];
+let geneSetMode = false;
+let geneSetResults = [];
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadMetadata();
+  await loadGeneIndex();
+  renderAtlasOverview();
+  setupSearch();
+  setupGeneSetToggle();
+  // Preload UMAP in background
+  loadUmapData();
+});
+
+// ===== DATA LOADING =====
+async function loadMetadata() {
+  try {
+    const r = await fetch(DATA_BASE + 'metadata.json');
+    metadata = await r.json();
+  } catch(e) {
+    console.error('Failed to load metadata:', e);
+    metadata = {
+      n_cells: 144064, n_genes: 7685,
+      species: ['human','macaque','marmoset','mouse','rat','pig'],
+      cell_types: ['Art_EC','Cap_EC','EC','Fibroblast','Pericyte','SMC','Ven_EC'],
+      n_cells_per_species: {human:31808,macaque:44243,marmoset:48320,mouse:17023,rat:1601,pig:1069},
+      n_cells_per_celltype: {Art_EC:12114,Cap_EC:43134,EC:15788,Fibroblast:18255,Pericyte:23794,SMC:8470,Ven_EC:22509},
+      species_colors: SPECIES_COLORS,
+      celltype_colors: CELLTYPE_COLORS
+    };
+  }
+}
+
+async function loadGeneIndex() {
+  try {
+    const r = await fetch(DATA_BASE + 'gene_index.json');
+    const raw = await r.json();
+    // Support both old flat-string format and new object format
+    if (raw.length > 0 && typeof raw[0] === 'object') {
+      geneIndex = [];
+      symbolToHuman = {};
+      geneIsRmt = {};
+      geneMaxMean = {};
+      const SPECIES_SYMBOL_KEYS = ['human_symbol','mouse_symbol','macaque_symbol','marmoset_symbol','rat_symbol','pig_symbol'];
+      for (const entry of raw) {
+        const human = entry.human_symbol;
+        if (!human) continue;
+        geneIndex.push(human);
+        geneIsRmt[human] = entry.is_rmt === true;
+        geneMaxMean[human] = entry.max_mean ?? null;
+        for (const key of SPECIES_SYMBOL_KEYS) {
+          const sym = entry[key];
+          if (sym) symbolToHuman[sym.toUpperCase()] = human;
+        }
+      }
+    } else {
+      // Old flat format: array of strings
+      geneIndex = raw;
+      symbolToHuman = {};
+      for (const g of geneIndex) symbolToHuman[g.toUpperCase()] = g;
+    }
+    console.log(`Loaded ${geneIndex.length} genes`);
+  } catch(e) {
+    console.error('Failed to load gene index:', e);
+    geneIndex = [];
+    symbolToHuman = {};
+  }
+}
+
+async function loadGeneData(gene) {
+  showLoading(true);
+  try {
+    // Load full gene_data.json (cached by browser after first load)
+    if (!geneData) {
+      const r = await fetch(DATA_BASE + 'gene_data.json');
+      geneData = await r.json();
+    }
+    showLoading(false);
+    return geneData[gene] || null;
+  } catch(e) {
+    showLoading(false);
+    console.error('Failed to load gene data:', e);
+    return null;
+  }
+}
+
+async function loadUmapData() {
+  if (umapLoaded) return;
+  try {
+    const r = await fetch(DATA_BASE + 'umap_coords.json');
+    umapData = await r.json();
+    umapLoaded = true;
+    document.getElementById('umapLoadingMsg').style.display = 'none';
+    document.getElementById('umapContent').style.display = 'block';
+    renderUmap();
+  } catch(e) {
+    console.error('Failed to load UMAP data:', e);
+    document.getElementById('umapLoadingMsg').innerHTML = '❌ Failed to load UMAP data.';
+  }
+}
+
+async function loadMarkersData() {
+  if (markersData) return;
+  try {
+    const r = await fetch(DATA_BASE + 'markers.json');
+    markersData = await r.json();
+  } catch(e) {
+    console.error('Failed to load markers:', e);
+    markersData = {};
+  }
+}
+
+function showLoading(show) {
+  // Could add a global loading indicator if needed
+}
+
+// ===== ATLAS OVERVIEW =====
+function renderAtlasOverview() {
+  if (!metadata) return;
+  const maxCells = Math.max(...Object.values(metadata.n_cells_per_species));
+  const maxCT = Math.max(...Object.values(metadata.n_cells_per_celltype));
+  renderRmtPanel();
+
+  // Species bars
+  let speciesHTML = '';
+  for (const sp of SPECIES_ORDER) {
+    const n = metadata.n_cells_per_species[sp] || 0;
+    const pct = (n / maxCells * 100).toFixed(1);
+    const color = SPECIES_COLORS[sp];
+    speciesHTML += `
+      <div class="species-bar-row">
+        <div class="species-bar-label" style="color:${color};font-size:0.75rem;">${displaySpecies(sp)}</div>
+        <div class="species-bar-track">
+          <div class="species-bar-fill" style="width:${pct}%;background:${color};"></div>
+        </div>
+        <div class="species-bar-count">${n.toLocaleString()}</div>
+      </div>`;
+  }
+  document.getElementById('speciesBars').innerHTML = speciesHTML;
+
+  // Cell type bars
+  let ctHTML = '';
+  for (const ct of CELLTYPE_ORDER) {
+    const n = metadata.n_cells_per_celltype[ct] || 0;
+    const pct = (n / maxCT * 100).toFixed(1);
+    const color = CELLTYPE_COLORS[ct] || '#888';
+    ctHTML += `
+      <div class="species-bar-row">
+        <div class="species-bar-label" style="color:${color};font-size:0.72rem;">${displayCellType(ct)}</div>
+        <div class="species-bar-track">
+          <div class="species-bar-fill" style="width:${pct}%;background:${color};"></div>
+        </div>
+        <div class="species-bar-count">${n.toLocaleString()}</div>
+      </div>`;
+  }
+  document.getElementById('celltypeBars').innerHTML = ctHTML;
+}
+
+function toggleOverview() {
+  const toggle = document.getElementById('overviewToggle');
+  const body = document.getElementById('overviewBody');
+  toggle.classList.toggle('collapsed');
+  body.classList.toggle('hidden');
+}
+
+// ===== RMT PANEL =====
+function renderRmtPanel() {
+  const el = document.getElementById('rmtPanel');
+  if (!el) return;
+  if (!metadata || !metadata.rmt_panel || !metadata.rmt_panel.length) {
+    el.innerHTML = '<div style="font-size:0.78rem;color:var(--text2);">RMT panel data not available.</div>';
+    return;
+  }
+  const cats = metadata.translatability_categories || {};
+  const missing = metadata.missing_rmt_genes || {};
+  const note = metadata.category_note || '';
+
+  let rows = '';
+  for (const entry of metadata.rmt_panel) {
+    const gene = entry.gene;
+    const catColor = (cats[entry.category] && cats[entry.category].color) ? cats[entry.category].color : '#888';
+    let geneCell;
+    if (entry.in_browser) {
+      geneCell = `<span class="gene-link" onclick="selectGene('${gene}')" style="font-weight:700;">${gene}</span>`;
+    } else {
+      const tip = missing[gene] || 'Not in 6-way ortholog intersection';
+      geneCell = `<span style="color:#aaa;font-weight:600;" title="${tip}">${gene}</span>`;
+    }
+    rows += `<tr>
+      <td>${geneCell}</td>
+      <td style="font-size:0.78rem;">${entry.primary_cell_type || '—'}</td>
+      <td><span style="background:${catColor};color:white;padding:1px 7px;border-radius:4px;font-size:0.72rem;font-weight:700;">${entry.category || '—'}</span></td>
+      <td style="font-size:0.78rem;font-family:monospace;">${entry.composite_score !== undefined ? entry.composite_score.toFixed(3) : '—'}</td>
+      <td style="font-size:0.72rem;">${entry.in_browser ? '✅ In browser' : '<span style="color:#aaa;">⬜ Not available</span>'}</td>
+    </tr>`;
+  }
+
+  el.innerHTML = `
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+        <thead>
+          <tr>
+            <th style="padding:5px 8px;background:var(--surface2);border-bottom:2px solid var(--border);text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--text2);">Gene</th>
+            <th style="padding:5px 8px;background:var(--surface2);border-bottom:2px solid var(--border);text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--text2);">Primary Cell Type</th>
+            <th style="padding:5px 8px;background:var(--surface2);border-bottom:2px solid var(--border);text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--text2);">Category</th>
+            <th style="padding:5px 8px;background:var(--surface2);border-bottom:2px solid var(--border);text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--text2);">Score</th>
+            <th style="padding:5px 8px;background:var(--surface2);border-bottom:2px solid var(--border);text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.4px;color:var(--text2);">Status</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    ${note ? `<div style="font-size:0.72rem;color:var(--text2);font-style:italic;margin-top:8px;line-height:1.4;">${note}</div>` : ''}
+  `;
+}
+
+// ===== SEARCH =====
+function setupSearch() {
+  const input = document.getElementById('geneSearchInput');
+  const list = document.getElementById('autocompleteList');
+  let activeIdx = -1;
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toUpperCase();
+    if (q.length < 1) { list.classList.remove('open'); return; }
+    // Match against ALL species symbols in symbolToHuman
+    const allSymbols = Object.keys(symbolToHuman);
+    const startMatches = allSymbols.filter(sym => sym.startsWith(q));
+    const containsMatches = q.length >= 2 ? allSymbols.filter(sym => !sym.startsWith(q) && sym.includes(q)) : [];
+    // Deduplicate by human symbol, preserving order
+    const seenHuman = new Set();
+    const humanResults = [];
+    for (const sym of [...startMatches, ...containsMatches]) {
+      const human = symbolToHuman[sym];
+      if (human && !seenHuman.has(human)) {
+        seenHuman.add(human);
+        humanResults.push({ human, matchedSym: sym });
+      }
+    }
+    const all = humanResults.slice(0, 60);
+    if (all.length === 0) { list.classList.remove('open'); return; }
+    list.innerHTML = all.map(({ human, matchedSym }) => {
+      // Highlight the human symbol; if matched via alias, show alias hint
+      const idx = human.indexOf(q);
+      let label;
+      if (idx >= 0) {
+        label = human.slice(0, idx) + '<span class="gene-match">' + human.slice(idx, idx + q.length) + '</span>' + human.slice(idx + q.length);
+      } else {
+        // Matched via species alias
+        const aliasIdx = matchedSym.indexOf(q);
+        const aliasHighlighted = matchedSym.slice(0, aliasIdx) + '<span class="gene-match">' + matchedSym.slice(aliasIdx, aliasIdx + q.length) + '</span>' + matchedSym.slice(aliasIdx + q.length);
+        label = `<span class="gene-name">${human}</span> <span style="font-size:0.75rem;color:var(--text2);">(${aliasHighlighted})</span>`;
+      }
+      return `<div class="autocomplete-item" data-gene="${human}" onclick="selectGene('${human}')">${label}</div>`;
+    }).join('');
+    list.classList.add('open');
+    activeIdx = -1;
+  });
+
+  input.addEventListener('keydown', (e) => {
+    const items = list.querySelectorAll('.autocomplete-item');
+    if (e.key === 'ArrowDown') { activeIdx = Math.min(activeIdx + 1, items.length - 1); updateActive(items, activeIdx); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { activeIdx = Math.max(activeIdx - 1, 0); updateActive(items, activeIdx); e.preventDefault(); }
+    else if (e.key === 'Enter') {
+      if (activeIdx >= 0 && items[activeIdx]) { selectGene(items[activeIdx].dataset.gene); }
+      else { const q = input.value.trim(); if (q) selectGene(q); }
+      list.classList.remove('open');
+    }
+    else if (e.key === 'Escape') { list.classList.remove('open'); }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrap')) list.classList.remove('open');
+  });
+}
+
+function updateActive(items, idx) {
+  items.forEach((el, i) => el.classList.toggle('active', i === idx));
+  if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' });
+}
+
+function selectGene(gene) {
+  document.getElementById('geneSearchInput').value = gene;
+  document.getElementById('autocompleteList').classList.remove('open');
+  loadGene(gene);
+}
+
+function setupGeneSetToggle() {
+  document.getElementById('geneSetToggle').addEventListener('change', (e) => {
+    geneSetMode = e.target.checked;
+    document.getElementById('geneSetArea').classList.toggle('open', geneSetMode);
+    if (!geneSetMode) {
+      document.getElementById('geneSetSummary').classList.remove('visible');
+      if (currentGene) {
+        document.getElementById('expressionContent').style.display = 'block';
+        document.getElementById('expressionEmpty').style.display = 'none';
+      }
+    }
+  });
+}
+
+// ===== GENE LOADING =====
+async function loadGene(gene) {
+  gene = gene.trim().toUpperCase();
+  document.getElementById('notFoundMsg').classList.remove('visible');
+
+  // Resolve species alias → human symbol
+  if (symbolToHuman[gene]) {
+    gene = symbolToHuman[gene];
+  }
+
+  // Check known absent genes
+  const knownAbsent = ['ACTA2', 'CLDN5', 'SLC2A1'];
+  if (knownAbsent.includes(gene)) {
+    document.getElementById('notFoundMsg').innerHTML = `⚠️ <strong>${gene}</strong> is not in the atlas — excluded from the 6-way ortholog intersection.`;
+    document.getElementById('notFoundMsg').classList.add('visible');
+    return;
+  }
+
+  if (!geneIndex.includes(gene)) {
+    document.getElementById('notFoundMsg').classList.add('visible');
+    return;
+  }
+
+  const data = await loadGeneData(gene);
+  if (!data) {
+    document.getElementById('notFoundMsg').innerHTML = '❌ Failed to load gene data. Please try again.';
+    document.getElementById('notFoundMsg').classList.add('visible');
+    return;
+  }
+
+  currentGene = gene;
+  document.getElementById('geneSearchInput').value = gene;
+
+  // Update gene display
+  const display = document.getElementById('geneDisplay');
+  display.classList.add('visible');
+
+  // Change B: RMT badge
+  const isRmt = data.rmt && data.rmt.is_rmt === true;
+  const rmtBadgeHtml = isRmt
+    ? `<span class="rmt-badge" style="background:#e74c3c;color:white;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-left:8px;">RMT</span>`
+    : '';
+  document.getElementById('geneDisplayName').innerHTML = gene + rmtBadgeHtml;
+
+  let rmtInfoHtml = '';
+  if (isRmt) {
+    const cat = data.rmt.category || '';
+    const catColor = (metadata && metadata.translatability_categories && metadata.translatability_categories[cat])
+      ? metadata.translatability_categories[cat].color : '#888';
+    const score = data.rmt.composite_score !== undefined ? data.rmt.composite_score.toFixed(3) : '—';
+    const pct = data.rmt.primary_cell_type || '—';
+    rmtInfoHtml = `<div style="font-size:0.75rem;color:var(--text2);margin-top:4px;">Primary cell type: <strong>${pct}</strong> | Translatability: <span style="color:${catColor};font-weight:700;">${cat}</span> (composite score: ${score})</div>`;
+  }
+
+  const speciesWithExpr = Object.keys(data.expr || {}).length;
+  document.getElementById('geneDisplaySub').innerHTML = `Expressed in ${speciesWithExpr} species` + (rmtInfoHtml ? '<br>' + rmtInfoHtml : '');
+
+  // Show expression content
+  if (!geneSetMode) {
+    document.getElementById('expressionEmpty').style.display = 'none';
+    document.getElementById('expressionContent').style.display = 'block';
+    document.getElementById('geneSetSummary').classList.remove('visible');
+  }
+
+  // Render all views
+  renderDotPlot(gene, data);
+  renderBarChart(gene, data);
+  renderCrossSpecies(gene, data);
+  renderConservation(gene, data);
+
+  // Update UMAP if loaded
+  if (umapLoaded) {
+    renderUmap();
+  }
+}
+
+// ===== DOT PLOT =====
+function renderDotPlot(gene, data) {
+  const canvas = document.getElementById('dotPlotCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const species = SPECIES_ORDER;
+  const celltypes = CELLTYPE_ORDER;
+  const cellW = 52, cellH = 44;
+  const leftPad = 90, topPad = 30, rightPad = 20, bottomPad = 60;
+  const W = leftPad + celltypes.length * cellW + rightPad;
+  const H = topPad + species.length * cellH + bottomPad;
+
+  canvas.width = W;
+  canvas.height = H;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Collect all mean values for color scale
+  let allMeans = [];
+  for (const sp of species) {
+    for (const ct of celltypes) {
+      const v = data.expr?.[sp]?.[ct]?.mean;
+      if (v !== undefined) allMeans.push(v);
+    }
+  }
+  const maxMean = allMeans.length ? Math.max(...allMeans) : 1;
+  const minMean = 0;
+
+  // Draw grid background
+  ctx.fillStyle = '#f8f9fc';
+  ctx.fillRect(leftPad, topPad, celltypes.length * cellW, species.length * cellH);
+
+  // Draw grid lines
+  ctx.strokeStyle = '#e8eaf0';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= celltypes.length; i++) {
+    ctx.beginPath();
+    ctx.moveTo(leftPad + i * cellW, topPad);
+    ctx.lineTo(leftPad + i * cellW, topPad + species.length * cellH);
+    ctx.stroke();
+  }
+  for (let j = 0; j <= species.length; j++) {
+    ctx.beginPath();
+    ctx.moveTo(leftPad, topPad + j * cellH);
+    ctx.lineTo(leftPad + celltypes.length * cellW, topPad + j * cellH);
+    ctx.stroke();
+  }
+
+  // Draw dots
+  for (let si = 0; si < species.length; si++) {
+    const sp = species[si];
+    for (let ci = 0; ci < celltypes.length; ci++) {
+      const ct = celltypes[ci];
+      const entry = data.expr?.[sp]?.[ct];
+      if (!entry) continue;
+
+      const cx = leftPad + ci * cellW + cellW / 2;
+      const cy = topPad + si * cellH + cellH / 2;
+      const maxR = Math.min(cellW, cellH) / 2 - 4;
+      const r = Math.sqrt(entry.pct) * maxR;
+      const t = maxMean > 0 ? (entry.mean - minMean) / (maxMean - minMean) : 0;
+      const color = divergingColor(t);
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(r, 1.5), 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+  }
+
+  // Draw cell type labels (x-axis, rotated)
+  ctx.save();
+  ctx.font = '600 11px -apple-system, sans-serif';
+  ctx.fillStyle = '#444';
+  ctx.textAlign = 'right';
+  for (let ci = 0; ci < celltypes.length; ci++) {
+    const x = leftPad + ci * cellW + cellW / 2;
+    const y = topPad + species.length * cellH + 8;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(-Math.PI / 4);
+    ctx.fillStyle = CELLTYPE_COLORS[celltypes[ci]] || '#444';
+    ctx.fillText(displayCellType(celltypes[ci]), 0, 0);
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // Draw species labels (y-axis)
+  ctx.font = '600 11px -apple-system, sans-serif';
+  ctx.textAlign = 'right';
+  for (let si = 0; si < species.length; si++) {
+    const y = topPad + si * cellH + cellH / 2 + 4;
+    ctx.fillStyle = SPECIES_COLORS[species[si]];
+    ctx.fillText(displaySpecies(species[si]), leftPad - 8, y);
+  }
+}
+
+function divergingColor(t) {
+  // Blue-white-red diverging colorscale
+  if (t <= 0.5) {
+    const s = t * 2;
+    const r = Math.round(33 + s * (247 - 33));
+    const g = Math.round(102 + s * (247 - 102));
+    const b = Math.round(172 + s * (247 - 172));
+    return `rgb(${r},${g},${b})`;
+  } else {
+    const s = (t - 0.5) * 2;
+    const r = Math.round(247 + s * (214 - 247));
+    const g = Math.round(247 + s * (96 - 247));
+    const b = Math.round(247 + s * (77 - 247));
+    return `rgb(${r},${g},${b})`;
+  }
+}
+
+// ===== BAR CHART =====
+function renderBarChart(gene, data) {
+  const ctx = document.getElementById('barChartCanvas').getContext('2d');
+  if (barChart) barChart.destroy();
+
+  const celltypes = CELLTYPE_ORDER;
+  const datasets = SPECIES_ORDER.map(sp => ({
+    label: displaySpecies(sp),
+    data: celltypes.map(ct => data.expr?.[sp]?.[ct]?.mean ?? null),
+    backgroundColor: SPECIES_COLORS[sp] + 'cc',
+    borderColor: SPECIES_COLORS[sp],
+    borderWidth: 1,
+    borderRadius: 3,
+  }));
+
+  barChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: celltypes.map(displayCellType), datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 11 }, padding: 12 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const spRaw = SPECIES_ORDER[ctx.datasetIndex];
+              const ctRaw = celltypes[ctx.dataIndex];
+              const entry = data.expr?.[spRaw]?.[ctRaw];
+              if (!entry) return `${ctx.dataset.label}: N/A`;
+              return [`${ctx.dataset.label}: ${entry.mean.toFixed(3)}`, `  % expressing: ${(entry.pct * 100).toFixed(1)}%`, `  n cells: ${entry.n.toLocaleString()}`];
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: {
+          title: { display: true, text: 'Mean Expression (log1p)', font: { size: 11 } },
+          grid: { color: '#eee' },
+          ticks: { font: { size: 10 } }
+        }
+      }
+    }
+  });
+}
+
+// ===== CROSS-SPECIES CHART =====
+function renderCrossSpecies(gene, data) {
+  const ctx = document.getElementById('crossSpeciesCanvas').getContext('2d');
+  if (crossSpeciesChart) crossSpeciesChart.destroy();
+
+  const celltypes = CELLTYPE_ORDER;
+  const datasets = SPECIES_ORDER.map(sp => ({
+    label: displaySpecies(sp),
+    data: celltypes.map(ct => data.expr?.[sp]?.[ct]?.mean ?? null),
+    backgroundColor: SPECIES_COLORS[sp] + 'bb',
+    borderColor: SPECIES_COLORS[sp],
+    borderWidth: 1.5,
+    borderRadius: 3,
+  }));
+
+  crossSpeciesChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: celltypes.map(displayCellType), datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { position: 'right', labels: { font: { size: 11 }, padding: 10 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const spRaw = SPECIES_ORDER[ctx.datasetIndex];
+              const ctRaw = celltypes[ctx.dataIndex];
+              const entry = data.expr?.[spRaw]?.[ctRaw];
+              if (!entry) return `${ctx.dataset.label}: N/A`;
+              return `${ctx.dataset.label}: ${entry.mean.toFixed(3)} (${(entry.pct*100).toFixed(1)}%)`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Mean Expression (log1p)', font: { size: 11 } },
+          grid: { color: '#eee' },
+          ticks: { font: { size: 10 } }
+        },
+        y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+// ===== CONSERVATION =====
+function renderConservation(gene, data) {
+  const cons = data.conservation;
+  if (!cons) {
+    document.getElementById('conservationEmpty').style.display = 'block';
+    document.getElementById('conservationContent').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('conservationEmpty').style.display = 'none';
+  document.getElementById('conservationContent').style.display = 'block';
+
+  const meanR = cons.mean_reliable;
+  const badge = document.getElementById('conservationReliabilityBadge');
+
+  // Change E: add RMT translatability category badge next to mean_reliable score
+  let rmtCategoryBadge = '';
+  if (data.rmt && data.rmt.is_rmt && data.rmt.category) {
+    const cat = data.rmt.category;
+    const catColor = (metadata && metadata.translatability_categories && metadata.translatability_categories[cat])
+      ? metadata.translatability_categories[cat].color : '#888';
+    rmtCategoryBadge = ` <span style="background:${catColor};color:white;padding:2px 8px;border-radius:4px;font-size:0.7rem;font-weight:700;margin-left:6px;">${cat}</span>`;
+  }
+  badge.innerHTML = `<span class="reliability-badge ${reliabilityClass(meanR)}">Mean r: ${meanR.toFixed(3)} — ${reliabilityLabel(meanR)}</span>${rmtCategoryBadge}`;
+
+  // Conservation cards
+  const grid = document.getElementById('conservationGrid');
+  const reliableSpecies = ['macaque', 'marmoset', 'mouse'];
+  const unreliableSpecies = ['rat', 'pig'];
+
+  let html = '';
+  for (const sp of reliableSpecies) {
+    const r = cons[sp];
+    if (r === undefined || r === null) continue;
+    const barColor = conservationBarColor(r);
+    const barWidth = Math.abs(r) * 100;
+    html += `
+      <div class="conservation-card">
+        <div class="conservation-species">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${SPECIES_COLORS[sp]};"></span>
+          ${displaySpecies(sp)}
+          ${sp === 'macaque' ? '<span title="Cap_EC excluded" style="font-size:0.7rem;color:var(--text2);">(no Cap_EC)</span>' : ''}
+        </div>
+        <div class="conservation-bar-track">
+          <div class="conservation-bar-fill" style="width:${barWidth.toFixed(1)}%;background:${barColor};">
+            <span>${r.toFixed(3)}</span>
+          </div>
+        </div>
+        <div class="conservation-r-val">Pearson r = ${r.toFixed(3)} <span class="reliability-badge ${reliabilityClass(r)}" style="margin-left:4px;">${reliabilityLabel(r)}</span></div>
+      </div>`;
+  }
+
+  // Unreliable species
+  for (const sp of unreliableSpecies) {
+    const r = cons[sp];
+    html += `
+      <div class="conservation-card" style="opacity:0.7;">
+        <div class="conservation-species">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${SPECIES_COLORS[sp]};"></span>
+          ${displaySpecies(sp)} ⚠️
+        </div>
+        <div style="font-size:0.75rem;color:var(--text2);">
+          ${r !== undefined && r !== null ? `r = ${r.toFixed(3)}` : 'N/A'}<br>
+          <em>Unreliable (n=2 shared cell types)</em>
+        </div>
+      </div>`;
+  }
+  grid.innerHTML = html;
+
+  // Conservation bar chart
+  const chartCtx = document.getElementById('conservationChart').getContext('2d');
+  if (conservationChart) conservationChart.destroy();
+
+  const chartSpecies = reliableSpecies.filter(sp => cons[sp] !== undefined && cons[sp] !== null);
+  const chartValues = chartSpecies.map(sp => cons[sp]);
+  const chartColors = chartValues.map(r => conservationBarColor(r));
+
+  conservationChart = new Chart(chartCtx, {
+    type: 'bar',
+    data: {
+      labels: chartSpecies.map(displaySpecies),
+      datasets: [{
+        label: 'Pearson r vs Human',
+        data: chartValues,
+        backgroundColor: chartColors.map(c => c + 'cc'),
+        borderColor: chartColors,
+        borderWidth: 2,
+        borderRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `Pearson r = ${ctx.raw.toFixed(4)}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: -1, max: 1,
+          title: { display: true, text: 'Pearson r (expressolog correlation vs human)', font: { size: 11 } },
+          grid: { color: '#eee' },
+          ticks: { font: { size: 10 } }
+        },
+        y: { grid: { display: false }, ticks: { font: { size: 12, weight: '600' } } }
+      }
+    }
+  });
+}
+
+function conservationBarColor(r) {
+  if (r > 0.7) return '#27ae60';
+  if (r > 0.3) return '#f39c12';
+  return '#e74c3c';
+}
+function reliabilityClass(r) {
+  if (r > 0.7) return 'badge-high';
+  if (r > 0.3) return 'badge-medium';
+  return 'badge-low';
+}
+function reliabilityLabel(r) {
+  if (r > 0.7) return 'High';
+  if (r > 0.3) return 'Medium';
+  return 'Low';
+}
+
+// ===== UMAP =====
+function setUmapColor(mode) {
+  umapColorMode = mode;
+  document.querySelectorAll('.umap-toggle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('umapColor' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+  if (umapLoaded) renderUmap();
+}
+
+function renderUmap() {
+  if (!umapData) return;
+  const canvas = document.getElementById('umapCanvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  // Responsive sizing
+  const container = canvas.parentElement;
+  const W = Math.min(container.clientWidth - 32, 800);
+  const H = Math.round(W * 0.65);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#f8f9fc';
+  ctx.fillRect(0, 0, W, H);
+
+  // Compute bounds
+  const u1 = umapData.map(d => d.UMAP1);
+  const u2 = umapData.map(d => d.UMAP2);
+  const minU1 = Math.min(...u1), maxU1 = Math.max(...u1);
+  const minU2 = Math.min(...u2), maxU2 = Math.max(...u2);
+  const pad = 30;
+
+  function toX(v) { return pad + (v - minU1) / (maxU1 - minU1) * (W - 2 * pad); }
+  function toY(v) { return H - pad - (v - minU2) / (maxU2 - minU2) * (H - 2 * pad); }
+
+  // Gene expression values for coloring
+  let geneExprMap = null;
+  let maxExpr = 0;
+  if (umapColorMode === 'gene' && currentGene && geneData && geneData[currentGene]) {
+    geneExprMap = {};
+    const exprData = geneData[currentGene].expr;
+    for (const sp of SPECIES_ORDER) {
+      for (const ct of CELLTYPE_ORDER) {
+        const key = sp + '|' + ct;
+        geneExprMap[key] = exprData?.[sp]?.[ct]?.mean ?? 0;
+        maxExpr = Math.max(maxExpr, geneExprMap[key]);
+      }
+    }
+  }
+
+  // Draw points
+  const r = Math.max(1.2, Math.min(2.5, W / 400));
+  for (const cell of umapData) {
+    const x = toX(cell.UMAP1);
+    const y = toY(cell.UMAP2);
+    let color;
+    if (umapColorMode === 'celltype') {
+      color = CELLTYPE_COLORS[cell.cell_type] || '#888';
+    } else if (umapColorMode === 'species') {
+      color = SPECIES_COLORS[cell.species] || '#888';
+    } else if (umapColorMode === 'gene' && geneExprMap) {
+      const key = cell.species + '|' + cell.cell_type;
+      const val = geneExprMap[key] || 0;
+      if (val === 0) {
+        color = '#d0d4de';
+      } else {
+        const t = maxExpr > 0 ? val / maxExpr : 0;
+        color = exprGradientColor(t);
+      }
+    } else {
+      color = '#888';
+    }
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = color + 'cc';
+    ctx.fill();
+  }
+
+  // Legend
+  const legend = document.getElementById('umapLegend');
+  const colorbar = document.getElementById('umapColorbar');
+  if (umapColorMode === 'celltype') {
+    colorbar.style.display = 'none';
+    legend.innerHTML = CELLTYPE_ORDER.map(ct =>
+      `<div class="legend-item"><div class="legend-dot" style="background:${CELLTYPE_COLORS[ct]||'#888'}"></div>${displayCellType(ct)}</div>`
+    ).join('');
+  } else if (umapColorMode === 'species') {
+    colorbar.style.display = 'none';
+    legend.innerHTML = SPECIES_ORDER.map(sp =>
+      `<div class="legend-item"><div class="legend-dot" style="background:${SPECIES_COLORS[sp]}"></div>${displaySpecies(sp)}</div>`
+    ).join('');
+  } else if (umapColorMode === 'gene') {
+    legend.innerHTML = '';
+    if (currentGene) {
+      colorbar.style.display = 'flex';
+      document.getElementById('umapColorbarMax').textContent = maxExpr.toFixed(2);
+      // Important disclosure: coloring is by pseudobulk mean (group average), not per-cell
+      legend.innerHTML = '<div style="font-size:0.73rem;color:var(--text2);margin-top:4px;padding:4px 6px;background:#fff8e1;border-radius:4px;border:1px solid #ffe082;">⚠️ Cells colored by <strong>group mean expression</strong> (species × cell type average), not individual cell values. All cells of the same type in a species share one color.</div>';
+    } else {
+      colorbar.style.display = 'none';
+      legend.innerHTML = '<span style="font-size:0.78rem;color:var(--text2);">Search a gene to color by expression</span>';
+    }
+  }
+}
+
+function exprGradientColor(t) {
+  // White → blue gradient
+  const r = Math.round(232 + t * (2 - 232));
+  const g = Math.round(244 + t * (121 - 244));
+  const b = Math.round(253 + t * (238 - 253));
+  return `rgb(${r},${g},${b})`;
+}
+
+// ===== MARKERS =====
+document.getElementById('markersSpeciesSelect').addEventListener('change', function() {
+  const sp = this.value;
+  const ctSelect = document.getElementById('markersCelltypeSelect');
+  ctSelect.innerHTML = '<option value="">Select cell type...</option>';
+  if (sp && metadata && metadata.cell_types_per_species && metadata.cell_types_per_species[sp]) {
+    for (const ct of metadata.cell_types_per_species[sp]) {
+      ctSelect.innerHTML += `<option value="${ct}">${ct}</option>`;
+    }
+  }
+});
+
+async function loadMarkers() {
+  const sp = document.getElementById('markersSpeciesSelect').value;
+  const ct = document.getElementById('markersCelltypeSelect').value;
+  if (!sp || !ct) return;
+
+  await loadMarkersData();
+  const markers = markersData?.[sp]?.[ct];
+  if (!markers || markers.length === 0) {
+    document.getElementById('markersEmpty').style.display = 'block';
+    document.getElementById('markersContent').style.display = 'none';
+    document.getElementById('markersCount').textContent = '';
+    return;
+  }
+
+  currentMarkersData = markers.slice(0, 50);
+  markersSortCol = 'score';
+  markersSortDir = -1;
+  renderMarkersTable();
+  document.getElementById('markersEmpty').style.display = 'none';
+  document.getElementById('markersContent').style.display = 'block';
+  document.getElementById('markersCount').textContent = `Top ${currentMarkersData.length} markers`;
+}
+
+function renderMarkersTable() {
+  const tbody = document.getElementById('markersTableBody');
+  const sorted = [...currentMarkersData].sort((a, b) => {
+    let va = a[markersSortCol], vb = b[markersSortCol];
+    if (markersSortCol === 'rank') { va = currentMarkersData.indexOf(a); vb = currentMarkersData.indexOf(b); }
+    if (markersSortCol === 'gene') return markersSortDir * va.localeCompare(vb);
+    return markersSortDir * (va - vb);
+  });
+
+  tbody.innerHTML = sorted.map((m, i) => {
+    const padjStr = m.padj === 0 ? '<1e-300' : m.padj < 0.001 ? m.padj.toExponential(2) : m.padj.toFixed(4);
+    const inAtlas = geneIndex.includes(m.gene);
+    return `<tr>
+      <td style="color:var(--text2);font-size:0.75rem;">${i + 1}</td>
+      <td><span class="gene-link" onclick="selectGene('${m.gene}')">${m.gene}</span>${!inAtlas ? ' <span title="Not in 6-way ortholog set" style="font-size:0.7rem;color:var(--text2);">*</span>' : ''}</td>
+      <td>${m.score.toFixed(2)}</td>
+      <td style="color:${m.lfc > 0 ? '#27ae60' : '#e74c3c'};font-weight:600;">${m.lfc > 0 ? '+' : ''}${m.lfc.toFixed(3)}</td>
+      <td class="padj-val">${padjStr}</td>
+      <td>${(m.pct_in * 100).toFixed(1)}%</td>
+      <td>${(m.pct_out * 100).toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
+
+  // Update sort icons
+  document.querySelectorAll('#markersTable thead th').forEach(th => th.classList.remove('sorted'));
+}
+
+function sortMarkers(col) {
+  if (markersSortCol === col) markersSortDir *= -1;
+  else { markersSortCol = col; markersSortDir = col === 'padj' ? 1 : -1; }
+  renderMarkersTable();
+}
+
+// ===== GENE SET MODE =====
+async function searchGeneSet() {
+  const raw = document.getElementById('geneSetInput').value;
+  const genes = raw.split(/[
+,;]+/).map(g => g.trim().toUpperCase()).filter(g => g.length > 0);
+  if (genes.length === 0) return;
+
+  // Ensure gene data is loaded
+  if (!geneData) {
+    const loadingEl = document.getElementById('expressionEmpty');
+    loadingEl.innerHTML = '<div class="loading-spinner"><div class="spinner"></div> Loading gene data...</div>';
+    loadingEl.style.display = 'block';
+    await loadGeneData(genes[0]);
+    loadingEl.style.display = 'none';
+  }
+
+  const results = [];
+  const knownAbsent = ['ACTA2', 'CLDN5', 'SLC2A1'];
+
+  for (let gene of genes) {
+    // Resolve species alias → human symbol
+    if (symbolToHuman[gene]) gene = symbolToHuman[gene];
+    const inAtlas = geneIndex.includes(gene);
+    const isKnownAbsent = knownAbsent.includes(gene);
+    let maxMean = null, topCT = null, conservationMean = null;
+
+    if (inAtlas && geneData && geneData[gene]) {
+      const d = geneData[gene];
+      for (const sp of SPECIES_ORDER) {
+        for (const ct of CELLTYPE_ORDER) {
+          const m = d.expr?.[sp]?.[ct]?.mean;
+          if (m !== undefined && (maxMean === null || m > maxMean)) {
+            maxMean = m; topCT = ct;
+          }
+        }
+      }
+      conservationMean = d.conservation?.mean_reliable ?? null;
+    }
+
+    results.push({ gene, inAtlas, isKnownAbsent, maxMean, topCT, conservationMean });
+  }
+
+  geneSetResults = results;
+  renderGeneSetTable(results);
+
+  document.getElementById('expressionContent').style.display = 'none';
+  document.getElementById('expressionEmpty').style.display = 'none';
+  document.getElementById('geneSetSummary').classList.add('visible');
+  document.getElementById('geneSetCount').textContent = `${results.filter(r => r.inAtlas).length} / ${results.length} genes found in atlas`;
+}
+
+function renderGeneSetTable(results) {
+  const tbody = document.getElementById('geneSetTableBody');
+  tbody.innerHTML = results.map(r => {
+    const statusIcon = r.inAtlas ? '✅' : (r.isKnownAbsent ? '🚫' : '❌');
+    const statusText = r.inAtlas ? 'In atlas' : (r.isKnownAbsent ? 'Known absent' : 'Not found');
+    const maxMeanStr = r.maxMean !== null ? r.maxMean.toFixed(3) : '—';
+    const topCTStr = r.topCT || '—';
+    const consStr = r.conservationMean !== null ? `${r.conservationMean.toFixed(3)} (${reliabilityLabel(r.conservationMean)})` : '—';
+    return `<tr>
+      <td><strong>${r.gene}</strong></td>
+      <td>${statusIcon} ${statusText}</td>
+      <td>${maxMeanStr}</td>
+      <td>${r.topCT ? `<span style="color:${CELLTYPE_COLORS[r.topCT]||'#888'};font-weight:600;">${topCTStr}</span>` : '—'}</td>
+      <td>${r.conservationMean !== null ? `<span class="reliability-badge ${reliabilityClass(r.conservationMean)}">${consStr}</span>` : '—'}</td>
+      <td>${r.inAtlas ? `<span class="gene-link" onclick="selectGene('${r.gene}')">View</span>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+function clearGeneSet() {
+  document.getElementById('geneSetInput').value = '';
+  document.getElementById('geneSetSummary').classList.remove('visible');
+  geneSetResults = [];
+}
+
+// ===== CSV EXPORT =====
+function exportCSV() {
+  if (!currentGene || !geneData || !geneData[currentGene]) return;
+  const data = geneData[currentGene];
+  const rows = [['gene', 'species', 'cell_type', 'mean_expr', 'pct_expressing', 'n_cells']];
+  for (const sp of SPECIES_ORDER) {
+    for (const ct of CELLTYPE_ORDER) {
+      const e = data.expr?.[sp]?.[ct];
+      if (e) rows.push([currentGene, sp, ct, e.mean, e.pct, e.n]);
+    }
+  }
+  downloadCSV(rows, `${currentGene}_expression.csv`);
+}
+
+function exportGeneSetCSV() {
+  if (!geneSetResults.length) return;
+  const rows = [['gene', 'in_atlas', 'max_mean_expr', 'top_cell_type', 'conservation_mean_r', 'conservation_reliability']];
+  for (const r of geneSetResults) {
+    rows.push([r.gene, r.inAtlas, r.maxMean ?? '', r.topCT ?? '', r.conservationMean ?? '', r.conservationMean !== null ? reliabilityLabel(r.conservationMean) : '']);
+  }
+  downloadCSV(rows, 'gene_set_summary.csv');
+}
+
+function downloadCSV(rows, filename) {
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel[id^="panel-"]').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#mainTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  if (tab === 'umap' && !umapLoaded) loadUmapData();
+  if (tab === 'umap' && umapLoaded) setTimeout(renderUmap, 50);
+  if (tab === 'markers') loadMarkersData();
+}
+
+function switchExprTab(tab) {
+  document.querySelectorAll('.tab-panel[id^="subpanel-"]').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#exprSubTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('subpanel-' + tab).classList.add('active');
+  document.getElementById('subtab-' + tab).classList.add('active');
+}
+
+// ===== UTILITIES =====
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function displayCellType(ct) {
+  return (metadata && metadata.cell_type_display_names && metadata.cell_type_display_names[ct]) || ct;
+}
+function displaySpecies(sp) {
+  return (metadata && metadata.species_display_names && metadata.species_display_names[sp]) || sp;
+}
+
+// Handle window resize for UMAP
+window.addEventListener('resize', () => {
+  if (umapLoaded && document.getElementById('panel-umap').classList.contains('active')) {
+    renderUmap();
+  }
+});
+
+</script>
+</body>
+</html>

@@ -1822,8 +1822,8 @@ function sortMarkers(col) {
 // ===== GENE SET MODE =====
 async function searchGeneSet() {
   const raw = document.getElementById('geneSetInput').value;
-  const genes = raw.split(/[
-,;]+/).map(g => g.trim().toUpperCase()).filter(g => g.length > 0);
+  // Split on newlines, commas, semicolons, or any whitespace run
+  const genes = raw.split(/[\n\r,;\s]+/).map(g => g.trim().toUpperCase()).filter(g => g.length > 0);
   if (genes.length === 0) return;
 
   // Ensure gene data is loaded

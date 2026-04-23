@@ -565,7 +565,7 @@
     <!-- Gene Search -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">🔍 Gene Search</span>
+        <span class="card-title">Gene Search</span>
       </div>
       <div class="card-body">
         <div class="search-wrap">
@@ -575,7 +575,7 @@
           <div class="autocomplete-list" id="autocompleteList"></div>
         </div>
         <div id="notFoundMsg" class="not-found-msg" style="margin-top:8px;">
-          ⚠️ Gene not found in atlas (7,685-gene ortholog set)
+          Gene not found in atlas (7,685-gene ortholog set)
         </div>
 
         <!-- Gene Set Mode -->
@@ -603,7 +603,7 @@
     <div class="card">
       <div class="card-header">
         <div class="overview-toggle" id="overviewToggle" onclick="toggleOverview()">
-          <span class="card-title">📊 Atlas Overview</span>
+          <span class="card-title">Atlas Overview</span>
           <span class="chevron">▼</span>
         </div>
       </div>
@@ -614,7 +614,10 @@
         <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Cell Type Composition</div>
         <div id="celltypeBars"></div>
         <div class="section-divider" style="margin:12px 0;"></div>
-        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">🎯 RMT Drug Targets</div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.4px;">RMT Drug Targets</div>
+        <div style="font-size:0.72rem;color:var(--text2);line-height:1.45;margin-bottom:10px;padding:8px 10px;background:var(--surface2);border-left:3px solid var(--accent, #0279EE);border-radius:4px;">
+          <strong>Receptor-mediated transcytosis (RMT)</strong> targets are cell-surface receptors on brain endothelial cells that shuttle ligands across the blood-brain barrier. They are used to deliver biologics (antibodies, proteins, gene therapies) into the CNS. This panel shows 10 RMT targets with their primary BBB cell type, a translatability category (how conserved expression is across species, which matters for mouse &rarr; human drug development), and whether the gene is available in the browser.
+        </div>
         <div id="rmtPanel"></div>
       </div>
     </div>
@@ -622,11 +625,14 @@
     <!-- Scientific Notes -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">📋 Atlas Notes</span>
+        <span class="card-title">Atlas Notes</span>
       </div>
       <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
         <div class="note note-info">
-          <strong>Gene space:</strong> 7,685 genes in the 6-way ortholog intersection across all species.
+          <strong>Atlas scope:</strong> This is a <em>vascular</em> BBB atlas — endothelial cells (Cap_EC, Art_EC, Ven_EC, generic EC), mural cells (Pericyte, SMC), and Fibroblasts. Astrocytes, microglia, neurons, and oligodendrocytes are <em>not</em> included: the source datasets targeted the vascular compartment (FACS or marker-based enrichment for CD31+/PDGFRB+ cells), so parenchymal cell types are absent by design.
+        </div>
+        <div class="note note-info">
+          <strong>Gene space:</strong> Search is limited to 7,685 genes in the 6-way ortholog intersection (genes with a 1-to-1 ortholog in all six species). This ensures cross-species comparisons are valid. Genes that fail the intersection (species-specific or unmapped) are not browsable here.
         </div>
         <div class="note note-absent">
           <strong>Known absent genes:</strong> ACTA2, CLDN5, SLC2A1 are <em>not</em> in the atlas (excluded from ortholog intersection).
@@ -656,13 +662,12 @@
     <!-- ===== EXPRESSION TAB ===== -->
     <div class="tab-panel active" id="panel-expression">
       <div id="expressionEmpty" class="empty-state">
-        <div class="empty-icon">🧬</div>
         <p>Search for a gene to view expression across species and cell types.</p>
         <p style="margin-top:6px;font-size:0.78rem;">Try: <span class="gene-link" onclick="loadGene('PECAM1')">PECAM1</span>, <span class="gene-link" onclick="loadGene('VWF')">VWF</span>, <span class="gene-link" onclick="loadGene('PDGFRB')">PDGFRB</span></p>
       </div>
       <div id="expressionContent" style="display:none;">
         <div class="export-row">
-          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
         </div>
         <!-- Expression sub-tabs -->
         <div class="tabs" id="exprSubTabs" style="margin-bottom:16px;">
@@ -675,7 +680,7 @@
         <div class="tab-panel active" id="subpanel-dotplot">
           <div class="card">
             <div class="card-header">
-              <span class="card-title">● Dot Plot — Expression by Species &amp; Cell Type</span>
+              <span class="card-title">Dot Plot — Expression by Species &amp; Cell Type</span>
               <div style="display:flex;align-items:center;gap:8px;font-size:0.75rem;color:var(--text2);">
                 <span>Size = % expressing</span>
                 <span>Color = mean expr</span>
@@ -709,7 +714,7 @@
         <div class="tab-panel" id="subpanel-barchart">
           <div class="card">
             <div class="card-header">
-              <span class="card-title">▬ Mean Expression by Cell Type</span>
+              <span class="card-title">Mean Expression by Cell Type</span>
             </div>
             <div class="card-body">
               <div class="chart-wrap" style="height:380px;">
@@ -723,7 +728,7 @@
         <div class="tab-panel" id="subpanel-crossspecies">
           <div class="card">
             <div class="card-header">
-              <span class="card-title">⊞ Cross-Species Comparison by Cell Type</span>
+              <span class="card-title">Cross-Species Comparison by Cell Type</span>
             </div>
             <div class="card-body">
               <div class="chart-wrap" style="height:400px;">
@@ -737,11 +742,11 @@
       <!-- Gene Set Summary -->
       <div class="gene-set-summary" id="geneSetSummary">
         <div class="export-row">
-          <button class="btn btn-secondary btn-sm" onclick="exportGeneSetCSV()">⬇ Export Gene Set CSV</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportGeneSetCSV()">Export Gene Set CSV</button>
         </div>
         <div class="card">
           <div class="card-header">
-            <span class="card-title">📋 Gene Set Summary</span>
+            <span class="card-title">Gene Set Summary</span>
             <span id="geneSetCount" style="font-size:0.78rem;color:var(--text2);"></span>
           </div>
           <div class="card-body">
@@ -769,7 +774,7 @@
     <div class="tab-panel" id="panel-umap">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">🗺 UMAP — 30,000 Cells</span>
+          <span class="card-title">UMAP — 30,000 Cells</span>
           <div class="umap-toggle-group">
             <button class="umap-toggle-btn active" id="umapColorCelltype" onclick="setUmapColor('celltype')">Cell Type</button>
             <button class="umap-toggle-btn" id="umapColorSpecies" onclick="setUmapColor('species')">Species</button>
@@ -797,13 +802,12 @@
     <!-- ===== CONSERVATION TAB ===== -->
     <div class="tab-panel" id="panel-conservation">
       <div id="conservationEmpty" class="empty-state">
-        <div class="empty-icon">🧬</div>
         <p>Search for a gene to view conservation scores.</p>
       </div>
       <div id="conservationContent" style="display:none;">
         <div class="card">
           <div class="card-header">
-            <span class="card-title">🔗 Expressolog Conservation vs Human</span>
+            <span class="card-title">Expressolog Conservation vs Human</span>
             <div id="conservationReliabilityBadge"></div>
           </div>
           <div class="card-body">
@@ -813,10 +817,10 @@
             </div>
             <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
               <div class="note note-warn">
-                ⚠️ <strong>Rat &amp; pig:</strong> Conservation scores unreliable — only 2 shared cell types with human (Cap_EC, Pericyte).
+                <strong>Rat &amp; pig:</strong> Conservation scores unreliable — only 2 shared cell types with human (Cap_EC, Pericyte).
               </div>
               <div class="note note-info">
-                ℹ️ <strong>Macaque:</strong> Conservation computed without Cap_EC (not present in macaque dataset).
+                <strong>Macaque:</strong> Conservation computed without Cap_EC (not present in macaque dataset).
               </div>
             </div>
           </div>
@@ -828,9 +832,12 @@
     <div class="tab-panel" id="panel-markers">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">🏷 Cell Type Marker Genes</span>
+          <span class="card-title">Cell Type Marker Genes</span>
         </div>
         <div class="card-body">
+          <div style="font-size:0.78rem;color:var(--text2);line-height:1.45;margin-bottom:12px;padding:10px 12px;background:var(--surface2);border-left:3px solid #0279EE;border-radius:4px;">
+            <strong>Within-species markers.</strong> Markers are computed <em>per species, one at a time</em> — not across species. For the species you pick, each cell type is compared against all other cell types in that same species (Wilcoxon differential expression). A gene appearing here is enriched in the selected cell type <em>within</em> that species; it is not necessarily a marker in other species. To compare markers across species, select the same cell type in different species and inspect the gene lists side by side.
+          </div>
           <div class="markers-controls">
             <select class="select-styled" id="markersSpeciesSelect" onchange="loadMarkers()">
               <option value="">Select species...</option>
@@ -847,7 +854,6 @@
             <span id="markersCount" style="font-size:0.78rem;color:var(--text2);align-self:center;"></span>
           </div>
           <div id="markersEmpty" class="empty-state" style="padding:30px;">
-            <div class="empty-icon" style="font-size:2rem;">🏷</div>
             <p>Select a species and cell type to view top marker genes.</p>
           </div>
           <div id="markersContent" style="display:none;">
@@ -1010,7 +1016,7 @@ async function loadUmapData() {
     renderUmap();
   } catch(e) {
     console.error('Failed to load UMAP data:', e);
-    document.getElementById('umapLoadingMsg').innerHTML = '❌ Failed to load UMAP data.';
+    document.getElementById('umapLoadingMsg').innerHTML = '<span style="color:#c62828;font-weight:600;">Failed to load UMAP data.</span>';
   }
 }
 
@@ -1106,7 +1112,7 @@ function renderRmtPanel() {
       <td style="font-size:0.78rem;">${entry.primary_cell_type || '—'}</td>
       <td><span style="background:${catColor};color:white;padding:1px 7px;border-radius:4px;font-size:0.72rem;font-weight:700;">${entry.category || '—'}</span></td>
       <td style="font-size:0.78rem;font-family:monospace;">${entry.composite_score !== undefined ? entry.composite_score.toFixed(3) : '—'}</td>
-      <td style="font-size:0.72rem;">${entry.in_browser ? '✅ In browser' : '<span style="color:#aaa;">⬜ Not available</span>'}</td>
+      <td style="font-size:0.72rem;">${entry.in_browser ? '<span style="color:#2e7d32;font-weight:600;">In browser</span>' : '<span style="color:#aaa;">Not available</span>'}</td>
     </tr>`;
   }
 
@@ -1227,7 +1233,7 @@ async function loadGene(gene) {
   // Check known absent genes
   const knownAbsent = ['ACTA2', 'CLDN5', 'SLC2A1'];
   if (knownAbsent.includes(gene)) {
-    document.getElementById('notFoundMsg').innerHTML = `⚠️ <strong>${gene}</strong> is not in the atlas — excluded from the 6-way ortholog intersection.`;
+    document.getElementById('notFoundMsg').innerHTML = `<strong>${gene}</strong> is not in the atlas — excluded from the 6-way ortholog intersection.`;
     document.getElementById('notFoundMsg').classList.add('visible');
     return;
   }
@@ -1239,7 +1245,7 @@ async function loadGene(gene) {
 
   const data = await loadGeneData(gene);
   if (!data) {
-    document.getElementById('notFoundMsg').innerHTML = '❌ Failed to load gene data. Please try again.';
+    document.getElementById('notFoundMsg').innerHTML = '<span style="color:#c62828;font-weight:600;">Failed to load gene data. Please try again.</span>';
     document.getElementById('notFoundMsg').classList.add('visible');
     return;
   }
@@ -1535,8 +1541,10 @@ function renderConservation(gene, data) {
   const unreliableSpecies = ['rat', 'pig'];
 
   let html = '';
+  // NB: data keys are r_macaque, r_mouse, r_marmoset, r_pig, r_rat
+  const getR = (sp) => cons['r_' + sp] ?? cons[sp];
   for (const sp of reliableSpecies) {
-    const r = cons[sp];
+    const r = getR(sp);
     if (r === undefined || r === null) continue;
     const barColor = conservationBarColor(r);
     const barWidth = Math.abs(r) * 100;
@@ -1558,12 +1566,12 @@ function renderConservation(gene, data) {
 
   // Unreliable species
   for (const sp of unreliableSpecies) {
-    const r = cons[sp];
+    const r = getR(sp);
     html += `
       <div class="conservation-card" style="opacity:0.7;">
         <div class="conservation-species">
           <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${SPECIES_COLORS[sp]};"></span>
-          ${displaySpecies(sp)} ⚠️
+          ${displaySpecies(sp)} <span style="font-size:0.68rem;color:#b25600;font-weight:600;">(low-n)</span>
         </div>
         <div style="font-size:0.75rem;color:var(--text2);">
           ${r !== undefined && r !== null ? `r = ${r.toFixed(3)}` : 'N/A'}<br>
@@ -1577,8 +1585,8 @@ function renderConservation(gene, data) {
   const chartCtx = document.getElementById('conservationChart').getContext('2d');
   if (conservationChart) conservationChart.destroy();
 
-  const chartSpecies = reliableSpecies.filter(sp => cons[sp] !== undefined && cons[sp] !== null);
-  const chartValues = chartSpecies.map(sp => cons[sp]);
+  const chartSpecies = reliableSpecies.filter(sp => getR(sp) !== undefined && getR(sp) !== null);
+  const chartValues = chartSpecies.map(sp => getR(sp));
   const chartColors = chartValues.map(r => conservationBarColor(r));
 
   conservationChart = new Chart(chartCtx, {
@@ -1735,7 +1743,7 @@ function renderUmap() {
       colorbar.style.display = 'flex';
       document.getElementById('umapColorbarMax').textContent = maxExpr.toFixed(2);
       // Important disclosure: coloring is by pseudobulk mean (group average), not per-cell
-      legend.innerHTML = '<div style="font-size:0.73rem;color:var(--text2);margin-top:4px;padding:4px 6px;background:#fff8e1;border-radius:4px;border:1px solid #ffe082;">⚠️ Cells colored by <strong>group mean expression</strong> (species × cell type average), not individual cell values. All cells of the same type in a species share one color.</div>';
+      legend.innerHTML = '<div style="font-size:0.73rem;color:var(--text2);margin-top:4px;padding:4px 6px;background:#fff8e1;border-radius:4px;border:1px solid #ffe082;"><strong>Note:</strong> Cells colored by <strong>group mean expression</strong> (species × cell type average), not individual cell values. All cells of the same type in a species share one color.</div>';
     } else {
       colorbar.style.display = 'none';
       legend.innerHTML = '<span style="font-size:0.78rem;color:var(--text2);">Search a gene to color by expression</span>';
@@ -1873,14 +1881,14 @@ async function searchGeneSet() {
 function renderGeneSetTable(results) {
   const tbody = document.getElementById('geneSetTableBody');
   tbody.innerHTML = results.map(r => {
-    const statusIcon = r.inAtlas ? '✅' : (r.isKnownAbsent ? '🚫' : '❌');
+    const statusColor = r.inAtlas ? '#2e7d32' : (r.isKnownAbsent ? '#c62828' : '#b25600');
     const statusText = r.inAtlas ? 'In atlas' : (r.isKnownAbsent ? 'Known absent' : 'Not found');
     const maxMeanStr = r.maxMean !== null ? r.maxMean.toFixed(3) : '—';
     const topCTStr = r.topCT || '—';
     const consStr = r.conservationMean !== null ? `${r.conservationMean.toFixed(3)} (${reliabilityLabel(r.conservationMean)})` : '—';
     return `<tr>
       <td><strong>${r.gene}</strong></td>
-      <td>${statusIcon} ${statusText}</td>
+      <td><span style="color:${statusColor};font-weight:600;">${statusText}</span></td>
       <td>${maxMeanStr}</td>
       <td>${r.topCT ? `<span style="color:${CELLTYPE_COLORS[r.topCT]||'#888'};font-weight:600;">${topCTStr}</span>` : '—'}</td>
       <td>${r.conservationMean !== null ? `<span class="reliability-badge ${reliabilityClass(r.conservationMean)}">${consStr}</span>` : '—'}</td>

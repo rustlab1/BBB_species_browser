@@ -1,0 +1,260 @@
+{
+  "version": "1.0",
+  "description": "Curated CNS-relevant drugs annotated with BBB permeability and the BBB transporter targets they interact with. Mechanism = how the drug crosses (or fails to cross) the BBB.",
+  "permeability_categories": {
+    "high":   {"label": "High BBB permeability", "color": "#27ae60", "description": "Crosses readily, free CNS exposure ≥ plasma."},
+    "moderate":{"label": "Moderate", "color": "#f39c12", "description": "Limited CNS exposure; usually still therapeutic."},
+    "low":    {"label": "Low / restricted", "color": "#e74c3c", "description": "Largely excluded — efflux substrate or polarity barrier."},
+    "carrier":{"label": "Carrier-mediated", "color": "#3498db", "description": "Crosses via a specific transporter (SLC, RMT)."},
+    "biologic":{"label": "Biologic — engineered", "color": "#9b59b6", "description": "Antibody/protein therapeutic engineered for RMT-mediated transcytosis."}
+  },
+  "drugs": [
+    {
+      "name": "Levodopa",
+      "alt": "L-DOPA",
+      "category": "carrier",
+      "indication": "Parkinson's disease",
+      "transporters": ["SLC7A5"],
+      "mechanism": "Influx via LAT1 (SLC7A5/SLC3A2). Co-administered with carbidopa to prevent peripheral decarboxylation.",
+      "kp": null
+    },
+    {
+      "name": "Gabapentin",
+      "category": "carrier",
+      "indication": "Epilepsy / neuropathic pain",
+      "transporters": ["SLC7A5"],
+      "mechanism": "LAT1 substrate at the BBB."
+    },
+    {
+      "name": "Melphalan",
+      "category": "carrier",
+      "indication": "Multiple myeloma; brain tumors",
+      "transporters": ["SLC7A5"],
+      "mechanism": "Phenylalanine mustard transported by LAT1."
+    },
+    {
+      "name": "Methotrexate",
+      "category": "low",
+      "indication": "Leukemia / lymphoma",
+      "transporters": ["SLCO1A2","ABCC1","ABCG2","SLC22A8"],
+      "mechanism": "OAT3/MRP-mediated efflux limits CNS levels; intrathecal dosing required for CNS leukemia."
+    },
+    {
+      "name": "Loperamide",
+      "category": "low",
+      "indication": "Diarrhea (peripheral opioid)",
+      "transporters": ["ABCB1"],
+      "mechanism": "Strong P-gp substrate — actively pumped out, hence no central opioid effect at therapeutic doses."
+    },
+    {
+      "name": "Domperidone",
+      "category": "low",
+      "indication": "Antiemetic",
+      "transporters": ["ABCB1"],
+      "mechanism": "P-gp substrate — peripheral antiemetic without extrapyramidal effects."
+    },
+    {
+      "name": "Paclitaxel",
+      "category": "low",
+      "indication": "Cancer chemotherapy",
+      "transporters": ["ABCB1","ABCG2"],
+      "mechanism": "Dual P-gp / BCRP substrate. Limits utility for brain metastases."
+    },
+    {
+      "name": "Imatinib",
+      "category": "low",
+      "indication": "CML / GIST",
+      "transporters": ["ABCB1","ABCG2"],
+      "mechanism": "Effluxed by P-gp and BCRP; CNS exposure limited."
+    },
+    {
+      "name": "Vinblastine",
+      "category": "low",
+      "indication": "Cancer",
+      "transporters": ["ABCB1"],
+      "mechanism": "Classical P-gp substrate."
+    },
+    {
+      "name": "Digoxin",
+      "category": "low",
+      "indication": "Heart failure",
+      "transporters": ["ABCB1"],
+      "mechanism": "P-gp substrate; CNS exclusion is therapeutically desirable."
+    },
+    {
+      "name": "Verapamil",
+      "category": "moderate",
+      "indication": "Hypertension / arrhythmia",
+      "transporters": ["ABCB1"],
+      "mechanism": "P-gp inhibitor + substrate; widely used as PET tracer for P-gp function."
+    },
+    {
+      "name": "Diazepam",
+      "category": "high",
+      "indication": "Anxiolytic / anticonvulsant",
+      "transporters": [],
+      "mechanism": "Lipophilic; passive transcellular diffusion."
+    },
+    {
+      "name": "Caffeine",
+      "category": "high",
+      "indication": "CNS stimulant",
+      "transporters": [],
+      "mechanism": "Passive diffusion; small lipophilic xanthine."
+    },
+    {
+      "name": "Morphine",
+      "category": "moderate",
+      "indication": "Analgesic",
+      "transporters": ["ABCB1"],
+      "mechanism": "Weak P-gp substrate; CNS levels tempered by efflux."
+    },
+    {
+      "name": "Risperidone",
+      "category": "moderate",
+      "indication": "Antipsychotic",
+      "transporters": ["ABCB1"],
+      "mechanism": "P-gp substrate but enough crosses for therapeutic effect."
+    },
+    {
+      "name": "Phenytoin",
+      "category": "high",
+      "indication": "Epilepsy",
+      "transporters": ["ABCB1"],
+      "mechanism": "Modest P-gp substrate; readily crosses BBB."
+    },
+    {
+      "name": "Methylphenidate",
+      "category": "high",
+      "indication": "ADHD",
+      "transporters": [],
+      "mechanism": "Lipophilic; crosses passively."
+    },
+    {
+      "name": "Donanemab",
+      "category": "biologic",
+      "indication": "Alzheimer's disease (anti-Aβ)",
+      "transporters": [],
+      "mechanism": "IgG1 mAb. ~0.1% reaches brain by passive paracellular leak / minimal transcytosis."
+    },
+    {
+      "name": "Lecanemab",
+      "category": "biologic",
+      "indication": "Alzheimer's disease (anti-Aβ)",
+      "transporters": [],
+      "mechanism": "Humanized IgG1 mAb. CNS penetration ~0.1–0.3% of plasma."
+    },
+    {
+      "name": "Trontinemab",
+      "category": "biologic",
+      "indication": "Alzheimer's disease (Brain Shuttle)",
+      "transporters": ["TFRC"],
+      "mechanism": "Anti-Aβ mAb fused to a monovalent low-affinity TfR1 binder (Brain Shuttle); 5–10× brain penetration."
+    },
+    {
+      "name": "Etranacogene dezaparvovec",
+      "category": "biologic",
+      "indication": "Hemophilia B (does not cross BBB)",
+      "transporters": [],
+      "mechanism": "AAV5; does NOT efficiently cross intact BBB. Listed for contrast."
+    },
+    {
+      "name": "Idursulfase-IT",
+      "category": "biologic",
+      "indication": "Hunter syndrome (intrathecal IDS)",
+      "transporters": [],
+      "mechanism": "Direct intrathecal delivery — bypasses BBB entirely (failed RMT efforts)."
+    },
+    {
+      "name": "Aducanumab",
+      "category": "biologic",
+      "indication": "Alzheimer's (withdrawn)",
+      "transporters": [],
+      "mechanism": "Anti-Aβ IgG1; ~0.1% CNS penetration."
+    },
+    {
+      "name": "Galactose",
+      "category": "carrier",
+      "indication": "Nutrient",
+      "transporters": ["SLC2A1"],
+      "mechanism": "GLUT1-mediated; same transporter as glucose."
+    },
+    {
+      "name": "L-Phenylalanine",
+      "category": "carrier",
+      "indication": "Amino acid",
+      "transporters": ["SLC7A5"],
+      "mechanism": "LAT1 substrate; competitor of L-DOPA."
+    },
+    {
+      "name": "Cyclosporine A",
+      "category": "moderate",
+      "indication": "Immunosuppressant; P-gp inhibitor (research)",
+      "transporters": ["ABCB1"],
+      "mechanism": "Inhibits P-gp at high doses — used to chemosensitize the BBB."
+    },
+    {
+      "name": "Tariquidar",
+      "category": "moderate",
+      "indication": "P-gp inhibitor (clinical research)",
+      "transporters": ["ABCB1","ABCG2"],
+      "mechanism": "Third-generation efflux inhibitor."
+    },
+    {
+      "name": "Mannitol",
+      "category": "moderate",
+      "indication": "Osmotic BBB disruption",
+      "transporters": [],
+      "mechanism": "Hyperosmotic; transiently opens tight junctions (Doolittle protocol for chemotherapy delivery)."
+    },
+    {
+      "name": "Reolysin / oncolytic virus",
+      "category": "biologic",
+      "indication": "Brain tumor (research)",
+      "transporters": [],
+      "mechanism": "Convection-enhanced delivery (intratumoral) bypassing BBB."
+    },
+    {
+      "name": "Methadone",
+      "category": "moderate",
+      "indication": "Opioid replacement",
+      "transporters": ["ABCB1"],
+      "mechanism": "P-gp substrate; CNS levels variable across genotypes."
+    },
+    {
+      "name": "Topotecan",
+      "category": "low",
+      "indication": "Cancer",
+      "transporters": ["ABCG2"],
+      "mechanism": "BCRP substrate — restricts brain entry."
+    },
+    {
+      "name": "Sumatriptan",
+      "category": "low",
+      "indication": "Migraine",
+      "transporters": [],
+      "mechanism": "Polar; limited BBB crossing — peripheral 5HT1B/D action sufficient."
+    },
+    {
+      "name": "Lamivudine",
+      "category": "low",
+      "indication": "HIV / HBV",
+      "transporters": ["SLC22A8"],
+      "mechanism": "Active OAT3-mediated efflux out of CNS."
+    },
+    {
+      "name": "Zidovudine (AZT)",
+      "category": "moderate",
+      "indication": "HIV",
+      "transporters": ["SLC22A8"],
+      "mechanism": "Limited BBB penetration; OAT3 efflux."
+    },
+    {
+      "name": "Ivermectin",
+      "category": "low",
+      "indication": "Antiparasitic",
+      "transporters": ["ABCB1"],
+      "mechanism": "P-gp substrate — toxicity in P-gp-deficient collies illustrates CNS exclusion."
+    }
+  ]
+}

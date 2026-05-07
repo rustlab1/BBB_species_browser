@@ -4,34 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BBB Cross-Species Atlas — Gene Expression Browser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     /* ===== RESET & BASE ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #f8f9fc;
+      --bg: #fafafa;
       --surface: #ffffff;
-      --surface2: #f1f3f8;
-      --surface3: #e8ecf3;
-      --border: #dde1ea;
-      --text: #1a1d2e;
-      --text2: #5a6070;
-      --text3: #8b91a3;
-      --accent: #0279EE;
-      --accent2: #0056b3;
-      --accent-grad: linear-gradient(135deg, #0279EE 0%, #00c6ff 100%);
-      --success: #27ae60;
-      --warn: #f39c12;
-      --danger: #e74c3c;
-      --help: #27ae60;
-      --hindrance: #e74c3c;
-      --mixed: #f39c12;
+      --surface2: #f5f5f7;
+      --surface3: #ececef;
+      --border: #ebebed;
+      --border2: #d8d8dc;
+      --text: #222222;
+      --text2: #6a6a72;
+      --text3: #a0a0a8;
+      --accent: #ff385c;
+      --accent2: #d70466;
+      --accent-soft: #fff0f3;
+      --link: #0a66c2;
+      --accent-grad: linear-gradient(135deg, #ff385c 0%, #d70466 100%);
+      --success: #1f7a4d;
+      --warn: #b25e09;
+      --danger: #c0392b;
+      --help: #1f7a4d;
+      --hindrance: #c0392b;
+      --mixed: #b25e09;
       --marker: #6c5ce7;
-      --radius: 10px;
-      --radius-sm: 6px;
-      --shadow: 0 2px 12px rgba(0,0,0,0.08);
-      --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-lg: 0 6px 20px rgba(0,0,0,0.06);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     }
     html { font-size: 15px; }
     body {
@@ -39,42 +46,45 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      line-height: 1.5;
+      line-height: 1.55;
+      font-feature-settings: 'cv11', 'ss01', 'ss03';
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ===== HEADER ===== */
     .app-header {
-      background: linear-gradient(135deg, #0a1628 0%, #0d2044 50%, #0a1628 100%);
-      color: white;
-      padding: 16px 28px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 14px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 12px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+      border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
     }
-    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
     .header-logo {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, #0279EE, #00c6ff);
+      width: 36px; height: 36px;
+      background: var(--accent);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; font-weight: 900; color: white;
-      box-shadow: 0 2px 8px rgba(2,121,238,0.4);
+      font-size: 18px; font-weight: 800; color: white;
+      letter-spacing: -0.5px;
     }
-    .header-title h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.3px; }
-    .header-title p { font-size: 0.75rem; color: rgba(255,255,255,0.65); margin-top: 1px; }
+    .header-title h1 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+    .header-title p { font-size: 0.78rem; color: var(--text2); margin-top: 1px; }
     .header-badges { display: flex; gap: 6px; flex-wrap: wrap; }
     .badge {
-      padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.3px;
+      padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text2);
     }
-    .badge-blue { background: rgba(2,121,238,0.25); color: #7ec8ff; border: 1px solid rgba(2,121,238,0.3); }
-    .badge-green { background: rgba(39,174,96,0.2); color: #7ddc9e; border: 1px solid rgba(39,174,96,0.3); }
-    .badge-orange { background: rgba(243,156,18,0.2); color: #ffd080; border: 1px solid rgba(243,156,18,0.3); }
-    .badge-purple { background: rgba(155,89,182,0.2); color: #d8a8eb; border: 1px solid rgba(155,89,182,0.3); }
+    .badge-blue { background: #f0f7ff; color: #0a5ec9; border-color: #d8e8ff; }
+    .badge-green { background: #effaf2; color: #1a7a40; border-color: #c8eed8; }
+    .badge-orange { background: #fff6ec; color: #b25e09; border-color: #fadcb6; }
+    .badge-purple { background: #f6f1ff; color: #6c4cb1; border-color: #ddd0f5; }
 
     /* ===== LAYOUT ===== */
     .app-body {
@@ -86,22 +96,26 @@
     }
     .sidebar {
       grid-row: 1 / 3;
-      background: var(--surface);
+      background: var(--bg);
       border-right: 1px solid var(--border);
       overflow-y: auto;
-      padding: 18px;
+      padding: 24px 20px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      max-height: calc(100vh - 76px);
-      position: sticky; top: 76px;
+      height: calc(100vh - 72px);
+      position: sticky; top: 72px;
+      align-self: start;
     }
+    .sidebar > .card { flex-shrink: 0; }
     .main-content {
-      padding: 20px;
+      padding: 28px 32px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 22px;
+      max-width: 1400px;
+      width: 100%;
     }
 
     /* ===== CARDS ===== */
@@ -113,41 +127,42 @@
       overflow: hidden;
     }
     .card-header {
-      padding: 12px 16px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--surface2);
+      background: var(--surface);
       gap: 10px;
       flex-wrap: wrap;
     }
     .card-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text2);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: -0.1px;
+      color: var(--text);
       display: flex;
       align-items: center;
       gap: 7px;
     }
-    .card-body { padding: 16px; }
+    .card-body { padding: 20px; }
 
     /* ===== SEARCH ===== */
     .search-wrap { position: relative; }
     .search-input {
       width: 100%;
       padding: 10px 14px 10px 38px;
-      border: 2px solid var(--border);
+      border: 1px solid #c8cdd9;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-family: var(--font);
       background: var(--surface);
       color: var(--text);
       transition: border-color 0.2s, box-shadow 0.2s;
       outline: none;
     }
+    .search-input::placeholder { color: #8b91a3; opacity: 1; }
     .search-input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(2,121,238,0.12);
@@ -301,25 +316,30 @@
 
     /* ===== TABS ===== */
     .tabs {
-      display: flex; gap: 2px;
-      background: var(--surface2);
-      border-radius: 9px;
-      padding: 3px;
-      border: 1px solid var(--border);
+      display: flex; gap: 4px;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      border: none;
+      border-bottom: 1px solid var(--border);
       overflow-x: auto;
     }
     .tab-btn {
-      flex: 1; padding: 7px 10px;
-      border: none; border-radius: 7px;
-      font-size: 0.78rem; font-weight: 600; font-family: var(--font);
+      flex: 0 0 auto; padding: 10px 14px;
+      border: none; border-radius: 0;
+      font-size: 0.88rem; font-weight: 500; font-family: var(--font);
       cursor: pointer; background: transparent; color: var(--text2);
-      transition: all 0.15s; white-space: nowrap;
-      min-width: max-content;
+      transition: color 0.15s, border-color 0.15s; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
     }
+    .tab-btn:hover { color: var(--text); }
     .tab-btn.active {
-      background: var(--surface);
-      color: var(--accent);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      background: transparent;
+      color: var(--text);
+      box-shadow: none;
+      border-bottom-color: var(--text);
+      font-weight: 600;
     }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
@@ -955,9 +975,9 @@
   </div>
   <div class="header-badges">
     <span class="badge badge-blue">6 Species</span>
-    <span class="badge badge-green">7,685 Orthologs</span>
+    <span class="badge badge-green">16,755 Genes</span>
     <span class="badge badge-orange">144,064 Cells</span>
-    <span class="badge badge-purple">21 Pathways</span>
+    <span class="badge badge-purple">22 Pathways</span>
   </div>
 </header>
 
@@ -976,7 +996,7 @@
         <div class="search-wrap">
           <span class="search-icon">⌕</span>
           <input type="text" id="geneSearchInput" class="search-input"
-            placeholder="Search any gene (PECAM1, GLUT1, CLDN5...)" autocomplete="off" spellcheck="false">
+            placeholder="Search 16,755 genes (PECAM1, CLDN5, MFSD2A...)" autocomplete="off" spellcheck="false">
           <div class="autocomplete-list" id="autocompleteList"></div>
         </div>
         <div id="notFoundMsg" class="not-found-msg" style="margin-top:8px;"></div>
@@ -1015,10 +1035,10 @@
         </div>
       </div>
       <div class="card-body overview-body" id="overviewBody">
-        <div style="font-size:0.74rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Cells per Species</div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:10px;">Cells per species</div>
         <div id="speciesBars"></div>
-        <div class="section-divider" style="margin:12px 0;"></div>
-        <div style="font-size:0.74rem;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Cell Type Composition</div>
+        <div class="section-divider" style="margin:14px 0;"></div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:10px;">Cell type composition</div>
         <div id="celltypeBars"></div>
       </div>
     </div>
@@ -1062,7 +1082,7 @@
           <strong>Vascular atlas.</strong> Endothelial cells (Cap_EC, Art_EC, Ven_EC), pericytes, SMCs, fibroblasts. <em>No</em> astrocytes, microglia, or neurons — those parenchymal cell types were not enriched in the source datasets.
         </div>
         <div class="note note-info">
-          <strong>Gene space.</strong> Expression data is limited to 7,685 genes in the strict 6-way ortholog intersection. Genes outside this set (e.g., SLC2A1, ACTA2, CLDN5) can still be searched and viewed in the Pathways panel — the toolkit will tell you they're not in the cross-species expression set and link out to external resources.
+          <strong>Gene space.</strong> Expression data covers 16,755 human genes with at least one species ortholog (v4 atlas). Species missing an ortholog show no data (null) for that gene. A handful of genes with no usable ortholog map (e.g. ABCB1) still surface curated info via the Pathways panel and external links.
         </div>
         <div class="note note-warn">
           <strong>Conservation.</strong> Rat/pig scores are unreliable (only 2 shared cell types with human). Macaque excludes Cap_EC.
@@ -1093,8 +1113,8 @@
     <div class="tab-panel active" id="panel-expression">
       <div id="expressionEmpty" class="empty-state">
         <div class="empty-icon">⌕</div>
-        <p style="font-size:0.95rem;font-weight:600;color:var(--text);">Search for a gene to view expression across species and cell types.</p>
-        <p style="margin-top:10px;font-size:0.82rem;">Try: <span class="gene-link" onclick="loadGene('PECAM1')">PECAM1</span> · <span class="gene-link" onclick="loadGene('VWF')">VWF</span> · <span class="gene-link" onclick="loadGene('PDGFRB')">PDGFRB</span> · <span class="gene-link" onclick="loadGene('TFRC')">TFRC</span> · <span class="gene-link" onclick="loadGene('MFSD2A')">MFSD2A</span> · <span class="gene-link" onclick="loadGene('ABCB1')">ABCB1</span></p>
+        <p style="font-size:0.95rem;font-weight:600;color:var(--text);">Search any gene to view expression across species and cell types.</p>
+        <p style="margin-top:10px;font-size:0.82rem;">Try: <span class="gene-link" onclick="loadGene('PECAM1')">PECAM1</span> · <span class="gene-link" onclick="loadGene('CLDN5')">CLDN5</span> · <span class="gene-link" onclick="loadGene('MFSD2A')">MFSD2A</span> · <span class="gene-link" onclick="loadGene('SLC2A1')">SLC2A1</span> · <span class="gene-link" onclick="loadGene('TFRC')">TFRC</span> · <span class="gene-link" onclick="loadGene('PDGFRB')">PDGFRB</span></p>
         <p style="margin-top:14px;font-size:0.78rem;color:var(--text3);">Or jump to <span class="gene-link" onclick="switchTab('pathways')">BBB Pathways</span> to browse curated families.</p>
       </div>
       <div id="expressionContent" style="display:none;">
@@ -1452,18 +1472,18 @@
           <div class="compare-inputs">
             <div class="compare-input-wrap">
               <label>Gene A</label>
-              <input type="text" id="compareGeneA" class="compact-gene-input" placeholder="e.g. CLDN5" value="">
+              <input type="text" id="compareGeneA" class="compact-gene-input" placeholder="e.g. PECAM1" value="">
             </div>
             <div class="compare-input-wrap">
               <label>Gene B</label>
-              <input type="text" id="compareGeneB" class="compact-gene-input" placeholder="e.g. ABCB1" value="">
+              <input type="text" id="compareGeneB" class="compact-gene-input" placeholder="e.g. PDGFRB" value="">
             </div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
             <button class="btn btn-primary btn-sm" onclick="runCompare()">Compare</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadComparePreset('TFRC','MFSD2A')">TFRC vs MFSD2A</button>
             <button class="btn btn-secondary btn-sm" onclick="loadComparePreset('PECAM1','PDGFRB')">PECAM1 vs PDGFRB (EC vs Pericyte)</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadComparePreset('TFRC','INSR')">TFRC vs INSR (RMT pair)</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadComparePreset('TFRC','MFSD2A')">TFRC vs MFSD2A (RMT vs barrier)</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadComparePreset('CLDN5','OCLN')">CLDN5 vs OCLN (tight junctions)</button>
           </div>
           <div id="compareEmpty" class="empty-state">
             <div class="empty-icon">⇄</div>
@@ -1707,11 +1727,9 @@ const CELLTYPE_ORDER = ['Art_EC', 'Cap_EC', 'EC', 'Fibroblast', 'Pericyte', 'SMC
 const RELIABLE_CONSERVATION = ['macaque', 'marmoset', 'mouse'];
 const DATA_BASE = 'data/';
 
+// Curated note for genes that may still be absent in some atlas versions. v4 includes CLDN5/SLC2A1/ACTA2.
 const KNOWN_ABSENT_GENES = {
-  'SLC2A1': 'GLUT1 — dominant brain endothelial glucose transporter. Excluded from 6-way ortholog intersection.',
-  'AGER': 'RAGE — receptor for advanced glycation end products / Aβ influx. Excluded from 6-way ortholog intersection.',
-  'ACTA2': 'α-smooth muscle actin — canonical SMC marker. Excluded from 6-way ortholog intersection.',
-  'CLDN5': 'Claudin-5 — dominant tight junction protein at the BBB. Excluded from 6-way ortholog intersection.'
+  'ABCB1': 'P-glycoprotein / MDR1 — major BBB efflux pump. The rodent ortholog mapping (Abcb1a/Abcb1b) is unresolved in this build.'
 };
 
 // ===== STATE =====
@@ -1804,16 +1822,17 @@ async function loadGeneIndex() {
       symbolToHuman = {};
       geneIsRmt = {};
       geneMaxMean = {};
-      const SPECIES_SYMBOL_KEYS = ['human_symbol','mouse_symbol','macaque_symbol','marmoset_symbol','rat_symbol','pig_symbol'];
+      // Support both schemas: v2 keys (human_symbol, mouse_symbol, ...) and v4 keys (human, mouse, ...)
+      const SPECIES = ['human','mouse','macaque','marmoset','rat','pig'];
       for (const entry of raw) {
-        const human = entry.human_symbol;
+        const human = entry.human_symbol ?? entry.human;
         if (!human) continue;
         geneIndex.push(human);
         geneIsRmt[human] = entry.is_rmt === true;
         geneMaxMean[human] = entry.max_mean ?? null;
-        for (const key of SPECIES_SYMBOL_KEYS) {
-          const sym = entry[key];
-          if (sym) symbolToHuman[sym.toUpperCase()] = human;
+        for (const sp of SPECIES) {
+          const sym = entry[sp + '_symbol'] ?? entry[sp];
+          if (sym) symbolToHuman[String(sym).toUpperCase()] = human;
         }
       }
     } else {
@@ -1827,6 +1846,41 @@ async function loadGeneIndex() {
     geneIndex = [];
     symbolToHuman = {};
   }
+}
+
+// Convert v4 gene_data schema to v2 schema in place.
+// v4: {expression: {sp: {ct: {mean, pct}}}, conservation: {macaque, mouse, ...}, rmt: {is_rmt}, orthologs}
+// v2: {expr: {sp: {ct: {mean, pct, n}}}, conservation: {r_macaque, r_mouse, ..., mean_reliable}, rmt: {is_rmt, category, ...}}
+const RELIABLE_SP_FOR_MEAN = ['macaque','marmoset','mouse'];
+function adaptGeneEntry(d) {
+  if (!d) return d;
+  if (d.__v4adapted) return d;
+  // expression -> expr (alias the same object so existing code works)
+  if (d.expression && !d.expr) d.expr = d.expression;
+  // conservation: ensure r_<sp> keys + mean_reliable exist
+  if (d.conservation) {
+    let sum = 0, n = 0;
+    for (const sp of ['macaque','marmoset','mouse','rat','pig']) {
+      const v = d.conservation['r_' + sp] ?? d.conservation[sp];
+      if (v !== undefined && v !== null) {
+        if (d.conservation['r_' + sp] === undefined) d.conservation['r_' + sp] = v;
+      }
+    }
+    for (const sp of RELIABLE_SP_FOR_MEAN) {
+      const v = d.conservation['r_' + sp];
+      if (v !== undefined && v !== null && !isNaN(v)) { sum += v; n++; }
+    }
+    if (d.conservation.mean_reliable === undefined || d.conservation.mean_reliable === null) {
+      d.conservation.mean_reliable = n > 0 ? sum / n : null;
+    }
+  }
+  d.__v4adapted = true;
+  return d;
+}
+function adaptGeneDataAll(gd) {
+  if (!gd) return gd;
+  for (const k in gd) adaptGeneEntry(gd[k]);
+  return gd;
 }
 
 async function loadGeneFamilies() {
@@ -1861,8 +1915,9 @@ async function loadGeneData(gene) {
     if (!geneData) {
       const r = await fetch(DATA_BASE + 'gene_data.json');
       geneData = await r.json();
+      adaptGeneDataAll(geneData);
     }
-    return geneData[gene] || null;
+    return adaptGeneEntry(geneData[gene]) || null;
   } catch(e) {
     console.error('Failed to load gene data:', e);
     return null;
@@ -1873,6 +1928,7 @@ async function loadAllGeneData() {
   if (!geneData) {
     const r = await fetch(DATA_BASE + 'gene_data.json');
     geneData = await r.json();
+    adaptGeneDataAll(geneData);
   }
   return geneData;
 }
@@ -2962,9 +3018,13 @@ async function runCompare() {
   if (symbolToHuman[a]) a = symbolToHuman[a];
   if (symbolToHuman[b]) b = symbolToHuman[b];
   await loadAllGeneData();
-  const dA = geneData[a], dB = geneData[b];
+  const dA = adaptGeneEntry(geneData[a]), dB = adaptGeneEntry(geneData[b]);
   if (!dA || !dB) {
-    alert(`Both genes must be in the atlas. ${!dA ? a + ' not found. ' : ''}${!dB ? b + ' not found.' : ''}`);
+    const empty = document.getElementById('compareEmpty');
+    empty.style.display = 'block';
+    document.getElementById('compareContent').style.display = 'none';
+    const missing = [!dA ? a : null, !dB ? b : null].filter(Boolean).join(' and ');
+    empty.innerHTML = `<div class="empty-icon">⚠</div><p>${missing} not in the atlas. Try genes from the empty-state suggestions on the Expression tab.</p>`;
     return;
   }
   document.getElementById('compareEmpty').style.display = 'none';
@@ -3067,7 +3127,7 @@ async function loadHeatmapPreset(kind) {
   let genes = [];
   if (kind === 'rmt') genes = ['TFRC','INSR','LRP1','LDLR','IGF1R','LRP2','LRP8','TFR2','BSG','FOLR1','HBEGF'];
   else if (kind === 'tj') genes = ['CLDN5','CLDN3','CLDN12','OCLN','TJP1','TJP2','TJP3','F11R','JAM2','JAM3','MARVELD2','CGN','ESAM'];
-  else if (kind === 'efflux') genes = ['ABCB1','ABCG2','ABCC1','ABCC2','ABCC3','ABCC4','ABCC5','ABCB4','ABCA1','ABCA7'];
+  else if (kind === 'efflux') genes = ['ABCG2','ABCC1','ABCC2','ABCC3','ABCC4','ABCC5','ABCB4','ABCA1','ABCA7'];
   else if (kind === 'cap_markers') genes = ['MFSD2A','TFRC','INSR','SLC2A1','SLC7A5','SLC16A1','BSG','CLDN5','OCLN','PECAM1','CDH5'];
   document.getElementById('heatmapGenes').value = genes.join(', ');
   switchTab('heatmap');

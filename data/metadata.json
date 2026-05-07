@@ -1,6 +1,6 @@
 {
   "n_cells": 144064,
-  "n_genes": 7685,
+  "n_genes": 16755,
   "species": [
     "human",
     "macaque",
@@ -113,16 +113,7 @@
     "LDLR",
     "SLC3A2"
   ],
-  "rmt_genes_in_browser": [
-    "TFRC",
-    "ATP1A2",
-    "LRP1",
-    "INSR",
-    "TMEM30A",
-    "ITGAV",
-    "LDLR",
-    "SLC3A2"
-  ],
+  "rmt_genes_in_browser": 10,
   "rmt_panel": [
     {
       "gene": "TFRC",
@@ -144,11 +135,11 @@
     },
     {
       "gene": "LRP1",
-      "primary_cell_type": "Capillary EC (BBB-relevant)",
+      "primary_cell_type": "Fibroblast",
       "category": "Poorly conserved",
       "composite_score": 0.256,
       "in_browser": true,
-      "note": "Promiscuous receptor; broadly expressed. BBB-relevant role is on capillary endothelium for amyloid-beta clearance.",
+      "note": null,
       "mean_reliable": 0.143
     },
     {
@@ -189,20 +180,20 @@
     },
     {
       "gene": "ITGAV",
-      "primary_cell_type": "Capillary EC (BBB-relevant)",
+      "primary_cell_type": "Astrocyte",
       "category": "Poorly conserved",
       "composite_score": 0.0,
       "in_browser": true,
-      "note": "Astrocytes not in this atlas (vascular-only). αV integrin is BBB-relevant via TGF-β activation on ECs.",
+      "note": null,
       "mean_reliable": -0.622
     },
     {
       "gene": "LDLR",
-      "primary_cell_type": "Capillary EC (BBB-relevant)",
+      "primary_cell_type": "Astrocyte",
       "category": "Poorly conserved",
       "composite_score": 0.0,
       "in_browser": true,
-      "note": "Astrocytes not in this atlas (vascular-only). LDLR on brain ECs is targeted by Angiopep-class drug-delivery vectors.",
+      "note": null,
       "mean_reliable": 0.313
     },
     {
@@ -250,5 +241,7 @@
   "missing_rmt_genes": {
     "AGER": "Receptor for advanced glycation end-products \u2014 absent from 6-way ortholog intersection",
     "SLC2A1": "GLUT1 glucose transporter \u2014 absent from 6-way ortholog intersection"
-  }
+  },
+  "gene_universe": "all_orthologs",
+  "gene_universe_note": "All 16,755 human genes with at least one ortholog in the 6-species table. Genes absent from a species show no data (null) for that species."
 }

@@ -11,3 +11,11 @@ _archive/
 
 # Empty placeholder from previous layout
 BBB_species_browser/
+
+# Local backups before v4 swap. Not for commit.
+*.v2-backup
+
+# Large data downloads. Never commit.
+*.zip
+*.tar.gz
+*.h5ad

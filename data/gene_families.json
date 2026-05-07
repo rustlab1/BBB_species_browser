@@ -1,0 +1,461 @@
+{
+  "version": "1.0",
+  "description": "Curated BBB-relevant gene families. Categorized as 'help' (drug delivery routes / nutrient transport in) or 'hindrance' (efflux / barrier function).",
+  "categories": [
+    {
+      "id": "tight_junctions",
+      "name": "Tight Junctions",
+      "role": "hindrance",
+      "color": "#e74c3c",
+      "description": "Paracellular barrier — seals the BBB against passive diffusion of polar molecules. Loss of tight junction integrity is a hallmark of BBB disruption (stroke, MS, Alzheimer's).",
+      "subtitle": "Sealing the paracellular space",
+      "genes": [
+        {"symbol": "CLDN5", "name": "Claudin-5", "note": "Dominant tight-junction protein in brain endothelium. Knockout causes size-selective barrier loss."},
+        {"symbol": "CLDN3", "name": "Claudin-3", "note": "Co-expressed with CLDN5 in brain endothelium."},
+        {"symbol": "CLDN12", "name": "Claudin-12", "note": "Reported at BBB; functional role debated."},
+        {"symbol": "CLDN1", "name": "Claudin-1", "note": "Up-regulated in BBB inflammation."},
+        {"symbol": "OCLN", "name": "Occludin", "note": "TJ regulatory protein; phosphorylation modulates barrier."},
+        {"symbol": "TJP1", "name": "ZO-1", "note": "Scaffolds TJ to actin cytoskeleton."},
+        {"symbol": "TJP2", "name": "ZO-2", "note": "TJ scaffold."},
+        {"symbol": "TJP3", "name": "ZO-3", "note": "TJ scaffold."},
+        {"symbol": "F11R", "name": "JAM-A", "note": "Leukocyte transmigration regulator."},
+        {"symbol": "JAM2", "name": "JAM-B"},
+        {"symbol": "JAM3", "name": "JAM-C"},
+        {"symbol": "MARVELD2", "name": "Tricellulin", "note": "Tricellular junction sealant."},
+        {"symbol": "CGN", "name": "Cingulin"},
+        {"symbol": "ESAM", "name": "Endothelial cell selective adhesion molecule"}
+      ]
+    },
+    {
+      "id": "adherens_junctions",
+      "name": "Adherens Junctions",
+      "role": "hindrance",
+      "color": "#c0392b",
+      "description": "Calcium-dependent endothelial cell-cell adhesion. Provides mechanical integrity beneath tight junctions.",
+      "subtitle": "Mechanical scaffold of EC contacts",
+      "genes": [
+        {"symbol": "CDH5", "name": "VE-cadherin", "note": "Master regulator of endothelial cell-cell adhesion."},
+        {"symbol": "CTNNB1", "name": "β-catenin"},
+        {"symbol": "CTNNA1", "name": "α-catenin"},
+        {"symbol": "CTNND1", "name": "p120-catenin"},
+        {"symbol": "PECAM1", "name": "CD31 / PECAM-1", "note": "Endothelial junction marker; mechanosensor."},
+        {"symbol": "JUP", "name": "Plakoglobin"}
+      ]
+    },
+    {
+      "id": "efflux_pumps",
+      "name": "ABC Efflux Transporters",
+      "role": "hindrance",
+      "color": "#d35400",
+      "description": "ATP-driven efflux pumps that expel drugs from BBB endothelium back to blood. Major obstacle for CNS drug delivery — most small-molecule CNS drugs in clinical use are NOT P-gp/BCRP substrates by design.",
+      "subtitle": "Drug efflux at the luminal membrane",
+      "genes": [
+        {"symbol": "ABCB1", "name": "MDR1 / P-gp", "note": "The most studied efflux pump; substrate spectrum spans most cationic and amphipathic drugs."},
+        {"symbol": "ABCG2", "name": "BCRP", "note": "Half-transporter dimer; restricts entry of TKIs, statins, antivirals."},
+        {"symbol": "ABCC1", "name": "MRP1", "note": "Multidrug resistance protein 1."},
+        {"symbol": "ABCC2", "name": "MRP2"},
+        {"symbol": "ABCC3", "name": "MRP3"},
+        {"symbol": "ABCC4", "name": "MRP4"},
+        {"symbol": "ABCC5", "name": "MRP5"},
+        {"symbol": "ABCB4", "name": "MDR3"},
+        {"symbol": "ABCA1", "name": "ABCA1", "note": "Cholesterol efflux; affects BBB lipid homeostasis."},
+        {"symbol": "ABCA7", "name": "ABCA7"}
+      ]
+    },
+    {
+      "id": "rmt_receptors",
+      "name": "Receptor-Mediated Transcytosis",
+      "role": "help",
+      "color": "#27ae60",
+      "description": "Receptors on the luminal endothelial surface that bind ligands and shuttle them across the BBB. The leading strategy for biologic drug delivery (antibodies, fusion proteins) into the CNS.",
+      "subtitle": "Drug delivery vehicles",
+      "genes": [
+        {"symbol": "TFRC", "name": "Transferrin Receptor (CD71)", "note": "Most validated BBB shuttle target; multiple bispecific antibody platforms (Denali, Roche, Genentech)."},
+        {"symbol": "INSR", "name": "Insulin Receptor", "note": "ArmaGen / Biogen platforms target HIR."},
+        {"symbol": "IGF1R", "name": "IGF-1 Receptor", "note": "Cross-reactive with INSR; alternative shuttle target."},
+        {"symbol": "IGF2R", "name": "IGF-2 / CI-MPR", "note": "Mannose-6-phosphate receptor; lysosomal targeting."},
+        {"symbol": "LDLR", "name": "LDL Receptor", "note": "Angiopep peptide vectors."},
+        {"symbol": "LRP1", "name": "LRP1 / α2M Receptor", "note": "Promiscuous receptor; amyloid-β clearance."},
+        {"symbol": "LRP2", "name": "Megalin / LRP2"},
+        {"symbol": "LRP8", "name": "ApoER2"},
+        {"symbol": "AGER", "name": "RAGE", "note": "Amyloid-β influx into brain; pro-inflammatory."},
+        {"symbol": "FOLR1", "name": "Folate Receptor α"},
+        {"symbol": "TFR2", "name": "Transferrin Receptor 2"},
+        {"symbol": "SLC7A1", "name": "CAT-1 (cationic AA)"},
+        {"symbol": "BSG", "name": "Basigin / CD147", "note": "MCT1 chaperone."},
+        {"symbol": "HBEGF", "name": "Diphtheria Toxin Receptor (HB-EGF)"}
+      ]
+    },
+    {
+      "id": "transcytosis_regulators",
+      "name": "Transcytosis Regulators",
+      "role": "hindrance",
+      "color": "#8e44ad",
+      "description": "Suppressors of vesicular trafficking. Brain capillary endothelium has uniquely low transcytosis — MFSD2A is the master switch (Andreone et al. 2017).",
+      "subtitle": "Why brain ECs have low pinocytosis",
+      "genes": [
+        {"symbol": "MFSD2A", "name": "MFSD2A / Mfsd2a", "note": "DHA-LPC importer; suppresses caveolae-mediated transcytosis. Specific to BBB capillary ECs."},
+        {"symbol": "CAV1", "name": "Caveolin-1", "note": "Caveolae structural protein; low in BBB ECs vs peripheral."},
+        {"symbol": "CAV2", "name": "Caveolin-2"},
+        {"symbol": "CAVIN1", "name": "Cavin-1 / PTRF"},
+        {"symbol": "CAVIN2", "name": "Cavin-2"},
+        {"symbol": "CAVIN3", "name": "Cavin-3"},
+        {"symbol": "PLVAP", "name": "PLVAP / PV-1", "note": "Fenestrae diaphragm protein. Absent from continuous BBB; present in fenestrated CNS endothelium (CVOs, choroid plexus)."}
+      ]
+    },
+    {
+      "id": "slc_glucose",
+      "name": "Glucose & Hexose Transporters",
+      "role": "help",
+      "color": "#16a085",
+      "description": "Carrier-mediated transport of glucose and other hexoses across the BBB.",
+      "subtitle": "Brain energy supply",
+      "genes": [
+        {"symbol": "SLC2A1", "name": "GLUT1", "note": "Dominant brain endothelial glucose transporter. SLC2A1 deficiency = De Vivo disease."},
+        {"symbol": "SLC2A3", "name": "GLUT3", "note": "Neuronal glucose transporter."},
+        {"symbol": "SLC2A4", "name": "GLUT4"},
+        {"symbol": "SLC2A5", "name": "GLUT5 (fructose)"},
+        {"symbol": "SLC5A1", "name": "SGLT1"},
+        {"symbol": "SLC5A2", "name": "SGLT2"}
+      ]
+    },
+    {
+      "id": "slc_amino_acids",
+      "name": "Amino Acid Transporters",
+      "role": "help",
+      "color": "#1abc9c",
+      "description": "Move large neutral, cationic, anionic, and small AAs across BBB. LAT1 is also exploited as a drug-delivery vehicle (gabapentin, L-DOPA).",
+      "subtitle": "Amino acid supply & drug delivery",
+      "genes": [
+        {"symbol": "SLC7A5", "name": "LAT1", "note": "Large neutral AA transporter; transports L-DOPA, gabapentin, melphalan."},
+        {"symbol": "SLC3A2", "name": "4F2hc / CD98", "note": "Heavy chain partner of LAT1."},
+        {"symbol": "SLC7A11", "name": "xCT (cystine/glutamate)"},
+        {"symbol": "SLC7A1", "name": "CAT-1 (cationic AA)"},
+        {"symbol": "SLC7A2", "name": "CAT-2"},
+        {"symbol": "SLC1A1", "name": "EAAT3 / EAAC1"},
+        {"symbol": "SLC1A2", "name": "EAAT2 / GLT-1", "note": "Astrocyte glutamate transporter."},
+        {"symbol": "SLC1A3", "name": "EAAT1 / GLAST"},
+        {"symbol": "SLC38A2", "name": "SNAT2"},
+        {"symbol": "SLC38A3", "name": "SNAT3"},
+        {"symbol": "SLC6A6", "name": "TauT (taurine)"},
+        {"symbol": "SLC6A14", "name": "ATB0+"}
+      ]
+    },
+    {
+      "id": "slc_monocarboxylates",
+      "name": "Monocarboxylate Transporters",
+      "role": "help",
+      "color": "#3498db",
+      "description": "Lactate, pyruvate, ketone bodies. Brain energy delivery especially during ketosis. Drug substrates include some statins.",
+      "subtitle": "Lactate & ketone transport",
+      "genes": [
+        {"symbol": "SLC16A1", "name": "MCT1", "note": "Major BBB monocarboxylate transporter."},
+        {"symbol": "SLC16A2", "name": "MCT8 (T3 thyroid hormone)", "note": "MCT8 deficiency = Allan-Herndon-Dudley syndrome."},
+        {"symbol": "SLC16A3", "name": "MCT4"},
+        {"symbol": "SLC16A7", "name": "MCT2"}
+      ]
+    },
+    {
+      "id": "slc_organic",
+      "name": "Organic Anion / Cation Transporters",
+      "role": "mixed",
+      "color": "#9b59b6",
+      "description": "OATs/OCTs/OATPs handle endogenous metabolites and many drugs. Direction (uptake vs efflux) depends on substrate and membrane localization.",
+      "subtitle": "Drug & metabolite handling",
+      "genes": [
+        {"symbol": "SLCO1A2", "name": "OATP1A2"},
+        {"symbol": "SLCO1B1", "name": "OATP1B1"},
+        {"symbol": "SLCO2B1", "name": "OATP2B1"},
+        {"symbol": "SLCO1C1", "name": "OATP1C1 (T4 thyroid hormone)"},
+        {"symbol": "SLC22A1", "name": "OCT1"},
+        {"symbol": "SLC22A2", "name": "OCT2"},
+        {"symbol": "SLC22A3", "name": "OCT3"},
+        {"symbol": "SLC22A6", "name": "OAT1"},
+        {"symbol": "SLC22A8", "name": "OAT3", "note": "Penicillin and methotrexate efflux at BBB."},
+        {"symbol": "SLC15A1", "name": "PEPT1"},
+        {"symbol": "SLC15A2", "name": "PEPT2"}
+      ]
+    },
+    {
+      "id": "slc_nucleosides_vitamins",
+      "name": "Nucleoside / Vitamin / Ion Transporters",
+      "role": "help",
+      "color": "#2980b9",
+      "description": "Carry nucleosides, vitamins, ions across the BBB.",
+      "subtitle": "Micronutrient delivery",
+      "genes": [
+        {"symbol": "SLC29A1", "name": "ENT1"},
+        {"symbol": "SLC29A2", "name": "ENT2"},
+        {"symbol": "SLC28A2", "name": "CNT2"},
+        {"symbol": "SLC19A1", "name": "RFC1 (folate)"},
+        {"symbol": "SLC19A2", "name": "ThTr1 (thiamine)"},
+        {"symbol": "SLC19A3", "name": "ThTr2 (thiamine)"},
+        {"symbol": "SLC23A2", "name": "SVCT2 (vitamin C)"},
+        {"symbol": "SLC11A2", "name": "DMT1 (iron)"},
+        {"symbol": "SLC4A4", "name": "NBC1 (bicarbonate)"},
+        {"symbol": "SLC12A2", "name": "NKCC1"},
+        {"symbol": "SLC9A1", "name": "NHE1 (Na/H exchanger)"},
+        {"symbol": "SLC8A1", "name": "NCX1 (Na/Ca exchanger)"}
+      ]
+    },
+    {
+      "id": "metabolism",
+      "name": "Metabolic Barrier Enzymes",
+      "role": "hindrance",
+      "color": "#7f8c8d",
+      "description": "Cytochrome P450s and conjugation enzymes degrade xenobiotics within BBB endothelium — the 'metabolic barrier' alongside the physical TJ barrier.",
+      "subtitle": "Enzymatic detoxification at BBB",
+      "genes": [
+        {"symbol": "CYP1A1", "name": "CYP1A1"},
+        {"symbol": "CYP1B1", "name": "CYP1B1"},
+        {"symbol": "CYP2B6", "name": "CYP2B6"},
+        {"symbol": "CYP2C9", "name": "CYP2C9"},
+        {"symbol": "CYP2C19", "name": "CYP2C19"},
+        {"symbol": "CYP2D6", "name": "CYP2D6"},
+        {"symbol": "CYP3A4", "name": "CYP3A4"},
+        {"symbol": "CYP3A5", "name": "CYP3A5"},
+        {"symbol": "MAOA", "name": "MAO-A"},
+        {"symbol": "MAOB", "name": "MAO-B"},
+        {"symbol": "COMT", "name": "COMT"},
+        {"symbol": "GSTP1", "name": "GST-π"},
+        {"symbol": "ALDH1A1", "name": "ALDH1A1"},
+        {"symbol": "UGT1A6", "name": "UGT1A6"}
+      ]
+    },
+    {
+      "id": "ec_general",
+      "name": "Endothelial Identity Markers",
+      "role": "marker",
+      "color": "#0279EE",
+      "description": "Pan-endothelial markers used to identify ECs in single-cell datasets.",
+      "subtitle": "EC identity",
+      "genes": [
+        {"symbol": "PECAM1", "name": "CD31"},
+        {"symbol": "CDH5", "name": "VE-cadherin"},
+        {"symbol": "VWF", "name": "von Willebrand Factor"},
+        {"symbol": "KDR", "name": "VEGFR2"},
+        {"symbol": "FLT1", "name": "VEGFR1"},
+        {"symbol": "TEK", "name": "TIE2"},
+        {"symbol": "TIE1", "name": "TIE1"},
+        {"symbol": "NOS3", "name": "eNOS"},
+        {"symbol": "ENG", "name": "Endoglin / CD105"},
+        {"symbol": "ESAM", "name": "ESAM"},
+        {"symbol": "EMCN", "name": "Endomucin"}
+      ]
+    },
+    {
+      "id": "ec_zonation",
+      "name": "EC Zonation Markers (Art / Cap / Ven)",
+      "role": "marker",
+      "color": "#FF9400",
+      "description": "Genes whose expression is enriched in arterial, capillary, or venous endothelial cells. Useful for classifying EC subtypes.",
+      "subtitle": "Arteriovenous specification",
+      "genes": [
+        {"symbol": "HEY1", "name": "HEY1 (arterial)"},
+        {"symbol": "HEY2", "name": "HEY2 (arterial)"},
+        {"symbol": "DLL4", "name": "DLL4 (arterial)"},
+        {"symbol": "GJA5", "name": "Cx40 (arterial)"},
+        {"symbol": "GJA4", "name": "Cx37 (arterial)"},
+        {"symbol": "BMX", "name": "BMX (arterial)"},
+        {"symbol": "EFNB2", "name": "Ephrin-B2 (arterial)"},
+        {"symbol": "SEMA3G", "name": "SEMA3G (arterial)"},
+        {"symbol": "MFSD2A", "name": "MFSD2A (capillary)"},
+        {"symbol": "SLC2A1", "name": "GLUT1 (capillary)"},
+        {"symbol": "TFRC", "name": "TfR (capillary)"},
+        {"symbol": "NR2F2", "name": "COUP-TFII (venous)"},
+        {"symbol": "EPHB4", "name": "EphB4 (venous)"},
+        {"symbol": "SELP", "name": "P-selectin (venous, inflamed)"},
+        {"symbol": "ACKR1", "name": "DARC / ACKR1 (venous)"},
+        {"symbol": "VCAM1", "name": "VCAM-1 (post-capillary venule)"}
+      ]
+    },
+    {
+      "id": "pericyte_markers",
+      "name": "Pericyte Markers",
+      "role": "marker",
+      "color": "#E9ED4C",
+      "description": "Mural cells embedded in the basement membrane of capillaries. Critical for BBB induction and maintenance (Armulik 2010, Daneman 2010).",
+      "subtitle": "BBB-inducing mural cells",
+      "genes": [
+        {"symbol": "PDGFRB", "name": "PDGFRβ"},
+        {"symbol": "RGS5", "name": "RGS5"},
+        {"symbol": "KCNJ8", "name": "Kir6.1"},
+        {"symbol": "ABCC9", "name": "SUR2"},
+        {"symbol": "DES", "name": "Desmin"},
+        {"symbol": "MCAM", "name": "CD146"},
+        {"symbol": "ANPEP", "name": "CD13"},
+        {"symbol": "CSPG4", "name": "NG2"},
+        {"symbol": "VTN", "name": "Vitronectin"},
+        {"symbol": "NOTCH3", "name": "NOTCH3", "note": "CADASIL gene."},
+        {"symbol": "FOXC1", "name": "FOXC1"},
+        {"symbol": "FOXF2", "name": "FOXF2"}
+      ]
+    },
+    {
+      "id": "smc_markers",
+      "name": "Smooth Muscle Cell Markers",
+      "role": "marker",
+      "color": "#FD9BED",
+      "description": "Vascular SMCs surround arterioles; contractile, regulate cerebral blood flow.",
+      "subtitle": "Arteriole contractility",
+      "genes": [
+        {"symbol": "ACTA2", "name": "α-SMA"},
+        {"symbol": "MYH11", "name": "Myosin heavy chain 11"},
+        {"symbol": "TAGLN", "name": "SM22α / Transgelin"},
+        {"symbol": "CNN1", "name": "Calponin"},
+        {"symbol": "MYL9", "name": "MLC9"},
+        {"symbol": "MYLK", "name": "MLCK"},
+        {"symbol": "SMTN", "name": "Smoothelin"},
+        {"symbol": "DES", "name": "Desmin"}
+      ]
+    },
+    {
+      "id": "fibroblast_markers",
+      "name": "Fibroblast Markers",
+      "role": "marker",
+      "color": "#9B59B6",
+      "description": "Perivascular fibroblasts produce ECM around large vessels; distinct from pericytes.",
+      "subtitle": "Perivascular ECM production",
+      "genes": [
+        {"symbol": "COL1A1", "name": "Collagen Iα1"},
+        {"symbol": "COL1A2", "name": "Collagen Iα2"},
+        {"symbol": "DCN", "name": "Decorin"},
+        {"symbol": "LUM", "name": "Lumican"},
+        {"symbol": "PDGFRA", "name": "PDGFRα"},
+        {"symbol": "FBLN1", "name": "Fibulin-1"},
+        {"symbol": "S100A4", "name": "S100A4 / FSP1"},
+        {"symbol": "POSTN", "name": "Periostin"}
+      ]
+    },
+    {
+      "id": "ecm_basement_membrane",
+      "name": "ECM / Basement Membrane",
+      "role": "marker",
+      "color": "#34495e",
+      "description": "Specialized basement membrane between endothelium and astrocyte endfeet.",
+      "subtitle": "BBB scaffold",
+      "genes": [
+        {"symbol": "COL4A1", "name": "Collagen IVα1"},
+        {"symbol": "COL4A2", "name": "Collagen IVα2"},
+        {"symbol": "LAMA4", "name": "Laminin α4"},
+        {"symbol": "LAMA5", "name": "Laminin α5"},
+        {"symbol": "LAMB1", "name": "Laminin β1"},
+        {"symbol": "LAMC1", "name": "Laminin γ1"},
+        {"symbol": "HSPG2", "name": "Perlecan"},
+        {"symbol": "NID1", "name": "Nidogen-1"},
+        {"symbol": "NID2", "name": "Nidogen-2"},
+        {"symbol": "FN1", "name": "Fibronectin"}
+      ]
+    },
+    {
+      "id": "integrins",
+      "name": "Integrins & Adhesion",
+      "role": "marker",
+      "color": "#2c3e50",
+      "description": "Mediate EC adhesion to BM and leukocyte transmigration.",
+      "subtitle": "Cell-matrix and leukocyte adhesion",
+      "genes": [
+        {"symbol": "ITGA1", "name": "α1 integrin"},
+        {"symbol": "ITGA5", "name": "α5 integrin"},
+        {"symbol": "ITGAV", "name": "αV integrin"},
+        {"symbol": "ITGB1", "name": "β1 integrin"},
+        {"symbol": "ITGB3", "name": "β3 integrin"},
+        {"symbol": "ICAM1", "name": "ICAM-1"},
+        {"symbol": "VCAM1", "name": "VCAM-1"},
+        {"symbol": "SELE", "name": "E-selectin"},
+        {"symbol": "SELP", "name": "P-selectin"}
+      ]
+    },
+    {
+      "id": "gpcrs",
+      "name": "GPCRs at the BBB",
+      "role": "mixed",
+      "color": "#d35400",
+      "description": "Major druggable receptor class; modulators of cerebral blood flow, permeability, and tone.",
+      "subtitle": "Druggable signaling",
+      "genes": [
+        {"symbol": "ADRA1A", "name": "α1A adrenergic"},
+        {"symbol": "ADRA2A", "name": "α2A adrenergic"},
+        {"symbol": "ADRB2", "name": "β2 adrenergic"},
+        {"symbol": "AGTR1", "name": "AT1 angiotensin receptor"},
+        {"symbol": "AGTR2", "name": "AT2 angiotensin receptor"},
+        {"symbol": "S1PR1", "name": "S1P1"},
+        {"symbol": "S1PR3", "name": "S1P3"},
+        {"symbol": "F2R", "name": "PAR-1"},
+        {"symbol": "F2RL1", "name": "PAR-2"},
+        {"symbol": "BDKRB1", "name": "Bradykinin B1"},
+        {"symbol": "BDKRB2", "name": "Bradykinin B2"},
+        {"symbol": "EDNRA", "name": "Endothelin A"},
+        {"symbol": "EDNRB", "name": "Endothelin B"},
+        {"symbol": "LPAR1", "name": "LPA1"},
+        {"symbol": "LPAR4", "name": "LPA4"},
+        {"symbol": "CXCR4", "name": "CXCR4"},
+        {"symbol": "ACKR3", "name": "CXCR7 / ACKR3"}
+      ]
+    },
+    {
+      "id": "wnt_signaling",
+      "name": "Wnt / β-Catenin Signaling",
+      "role": "marker",
+      "color": "#27ae60",
+      "description": "Wnt7a/Wnt7b signaling from neural progenitors via FZD/LRP/GPR124/RECK induces and maintains the BBB. Essential for barrier specification.",
+      "subtitle": "BBB induction & maintenance",
+      "genes": [
+        {"symbol": "WNT7A", "name": "Wnt7a"},
+        {"symbol": "WNT7B", "name": "Wnt7b"},
+        {"symbol": "FZD4", "name": "Frizzled-4"},
+        {"symbol": "FZD6", "name": "Frizzled-6"},
+        {"symbol": "LRP5", "name": "LRP5"},
+        {"symbol": "LRP6", "name": "LRP6"},
+        {"symbol": "ADGRA2", "name": "GPR124", "note": "BBB-specific Wnt co-activator."},
+        {"symbol": "RECK", "name": "RECK", "note": "GPI-anchored Wnt co-activator at BBB."},
+        {"symbol": "CTNNB1", "name": "β-catenin"},
+        {"symbol": "TCF7L2", "name": "TCF4"},
+        {"symbol": "AXIN2", "name": "Axin-2 (Wnt target)"},
+        {"symbol": "APCDD1", "name": "APCDD1 (Wnt target)"},
+        {"symbol": "NKD1", "name": "Naked-1 (Wnt target)"}
+      ]
+    },
+    {
+      "id": "neurodegen",
+      "name": "Neurodegeneration / GWAS",
+      "role": "marker",
+      "color": "#7f8c8d",
+      "description": "Genes implicated in BBB dysfunction in Alzheimer's, Parkinson's, ALS, and small-vessel disease.",
+      "subtitle": "BBB in disease",
+      "genes": [
+        {"symbol": "APOE", "name": "ApoE"},
+        {"symbol": "TREM2", "name": "TREM2"},
+        {"symbol": "PICALM", "name": "PICALM (Aβ transcytosis)"},
+        {"symbol": "CR1", "name": "CR1"},
+        {"symbol": "CLU", "name": "Clusterin / ApoJ"},
+        {"symbol": "ABCA7", "name": "ABCA7"},
+        {"symbol": "BIN1", "name": "BIN1"},
+        {"symbol": "NOTCH3", "name": "NOTCH3 (CADASIL)"},
+        {"symbol": "HTRA1", "name": "HTRA1 (CARASIL)"},
+        {"symbol": "COL4A1", "name": "COL4A1 (cerebral SVD)"},
+        {"symbol": "COL4A2", "name": "COL4A2 (cerebral SVD)"},
+        {"symbol": "TGFB1", "name": "TGF-β1"},
+        {"symbol": "TGFBR2", "name": "TGF-β R2"},
+        {"symbol": "VEGFA", "name": "VEGF-A"}
+      ]
+    },
+    {
+      "id": "astrocyte_markers",
+      "name": "Astrocyte Markers (NOT in atlas)",
+      "role": "marker",
+      "color": "#95a5a6",
+      "description": "Astrocyte endfeet contact ECs and induce barrier properties. Astrocytes are NOT included in this atlas (vascular-only) but key markers are listed for cross-reference.",
+      "subtitle": "BBB-supporting glia (not profiled here)",
+      "genes": [
+        {"symbol": "GFAP", "name": "GFAP"},
+        {"symbol": "S100B", "name": "S100β"},
+        {"symbol": "AQP4", "name": "Aquaporin-4 (endfoot)"},
+        {"symbol": "ALDH1L1", "name": "ALDH1L1"},
+        {"symbol": "SLC1A2", "name": "EAAT2"},
+        {"symbol": "GLUL", "name": "Glutamine synthetase"},
+        {"symbol": "AGT", "name": "Angiotensinogen"}
+      ]
+    }
+  ]
+}

@@ -144,11 +144,11 @@
     },
     {
       "gene": "LRP1",
-      "primary_cell_type": "Fibroblast",
+      "primary_cell_type": "Capillary EC (BBB-relevant)",
       "category": "Poorly conserved",
       "composite_score": 0.256,
       "in_browser": true,
-      "note": null,
+      "note": "Promiscuous receptor; broadly expressed. BBB-relevant role is on capillary endothelium for amyloid-beta clearance.",
       "mean_reliable": 0.143
     },
     {
@@ -189,20 +189,20 @@
     },
     {
       "gene": "ITGAV",
-      "primary_cell_type": "Astrocyte",
+      "primary_cell_type": "Capillary EC (BBB-relevant)",
       "category": "Poorly conserved",
       "composite_score": 0.0,
       "in_browser": true,
-      "note": null,
+      "note": "Astrocytes not in this atlas (vascular-only). αV integrin is BBB-relevant via TGF-β activation on ECs.",
       "mean_reliable": -0.622
     },
     {
       "gene": "LDLR",
-      "primary_cell_type": "Astrocyte",
+      "primary_cell_type": "Capillary EC (BBB-relevant)",
       "category": "Poorly conserved",
       "composite_score": 0.0,
       "in_browser": true,
-      "note": null,
+      "note": "Astrocytes not in this atlas (vascular-only). LDLR on brain ECs is targeted by Angiopep-class drug-delivery vectors.",
       "mean_reliable": 0.313
     },
     {
